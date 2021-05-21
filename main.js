@@ -4,6 +4,7 @@ const camera = new THREE.PerspectiveCamera( 80, window.innerWidth / window.inner
 const renderer = new THREE.WebGLRenderer();
 renderer.setSize( window.innerWidth, window.innerHeight );
 document.body.appendChild( renderer.domElement );
+
 const clock = new THREE.Clock();
 const geometry = new THREE.BoxGeometry();
 const material = new THREE.MeshToonMaterial( { color: 0x00ff00 } );
@@ -23,7 +24,8 @@ let stellarBackground = new THREE.CubeTextureLoader()
 	'posz.png',
 	'negz.png'
 ] );
-camera.position.z = 5;
+
+//camera.position.z = 5;
 
 
 //GLOBALS
@@ -32,15 +34,11 @@ currentScene = loadScene1();
 currentScene.background = stellarBackground;
 
 console.log(currentScene)
+
 function animate() {
-	cube.rotation.z+=0.02
-    cube.rotation.y+=0.02
-    cube.rotation.x+=0.02
-    camera.rotation.x+=0.001
-	//     camera.position.z = 5*Math.sin(clock.getElapsedTime())
-    camera.position.y = 5*Math.cos(clock.getElapsedTime())
-    renderer.render( currentScene, camera );
 	requestAnimationFrame( animate );
+	renderer.render( currentScene, camera );
 }
+
 animate()
 

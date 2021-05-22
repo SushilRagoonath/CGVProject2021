@@ -1,6 +1,7 @@
 const loader = new THREE.GLTFLoader();
 let scene1= new THREE.Scene();
 let xWingGLTF;
+
 function loadScene1(){
     
     loader.load('assets/x-wing/model.gltf',function ( gltf ) {
@@ -10,5 +11,8 @@ function loadScene1(){
 	return scene1;
 }
 function animateScene(){
-
+	//console.log(xWingGLTF.position.z);
+	//requestAnimationFrame( animateScene );
 }
+
+//animateScene();

@@ -23,8 +23,7 @@ let stellarBackground = new THREE.CubeTextureLoader()
 	'posz.png',
 	'negz.png'
 ] );
-camera.position.z = 5;
-
+//camera.position.z = 5;
 
 //GLOBALS
 // currentScene=sceneHome;
@@ -36,9 +35,9 @@ function animate() {
 	cube.rotation.z+=0.02
     cube.rotation.y+=0.02
     cube.rotation.x+=0.02
-    camera.rotation.x+=0.001
+    //camera.rotation.x+=0.001
 	//     camera.position.z = 5*Math.sin(clock.getElapsedTime())
-    camera.position.y = 5*Math.cos(clock.getElapsedTime())
+    //camera.position.y = 5*Math.cos(clock.getElapsedTime())
     renderer.render( currentScene, camera );
 	requestAnimationFrame( animate );
 }

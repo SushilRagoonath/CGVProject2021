@@ -13,6 +13,8 @@ let particleLight = new THREE.PointLight( 0xff0000, 1, 100 );
 sceneHome.add(lightAmbient);
 
 var firstcontrols = new THREE.FirstPersonControls(camera);
+firstcontrols.lookSpeed = 0.05;
+firstcontrols.movementSpeed = 10;
 
 
 sceneHome.add( cube );
@@ -33,7 +35,7 @@ let stellarBackground = new THREE.CubeTextureLoader()
 currentScene = loadScene1();
 currentScene.background = stellarBackground;
 
-
+camera.position.set( 0, 0, 10);
 
 console.log(currentScene)
 function animate() {

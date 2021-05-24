@@ -12,6 +12,9 @@ let lightAmbient = new THREE.AmbientLight(0x2FFFFFF); // soft white light
 let particleLight = new THREE.PointLight( 0xff0000, 1, 100 );
 sceneHome.add(lightAmbient);
 
+var firstcontrols = new THREE.FirstPersonControls(camera);
+
+
 sceneHome.add( cube );
 let stellarBackground = new THREE.CubeTextureLoader()
 .setPath( 'assets/stardust/' )
@@ -30,11 +33,17 @@ let stellarBackground = new THREE.CubeTextureLoader()
 currentScene = loadScene1();
 currentScene.background = stellarBackground;
 
+
+
 console.log(currentScene)
 function animate() {
+	var delta = clock.getDelta();
 	cube.rotation.z+=0.02
     cube.rotation.y+=0.02
     cube.rotation.x+=0.02
+
+	firstcontrols.update(delta);
+
     //camera.rotation.x+=0.001
 	//     camera.position.z = 5*Math.sin(clock.getElapsedTime())
     //camera.position.y = 5*Math.cos(clock.getElapsedTime())

@@ -19,7 +19,7 @@ firstcontrols.movementSpeed = 10;
 
 sceneHome.add( cube );
 let stellarBackground = new THREE.CubeTextureLoader()
-.setPath( 'assets/stardust/' )
+.setPath( '../assets/stardust/' )
 .load( [
 	'posx.png',
 	'negx.png',

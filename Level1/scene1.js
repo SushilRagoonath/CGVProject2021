@@ -4,15 +4,9 @@ let xWingGLTF;
 
 function loadScene1(){
     
-    loader.load('assets/x-wing/model.gltf',function ( gltf ) {
+    loader.load('../assets/x-wing/model.gltf',function ( gltf ) {
     xWingGLTF = gltf;
 	scene1.add( xWingGLTF.scene );
 	});
 	return scene1;
 }
-function animateScene(){
-	//console.log(xWingGLTF.position.z);
-	//requestAnimationFrame( animateScene );
-}
-
-//animateScene();

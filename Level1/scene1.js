@@ -1,7 +1,18 @@
 function loadSpaceShip(callback){
     loader.load('../assets/x-wing/modified-x-wing.glb',function ( gltf ) {
         xWing= gltf;
-        xWing.scene.rotation.x = 2 * Math.sin(clock.getElapsedTime())
+        
+        var newMaterial = new THREE.MeshBasicMaterial({color: 0xff0000,envMap:stellarBackground,reflectivity:0.4})
+        xWing.scene.traverse((o) => {
+            
+            if (o.isMesh){
+                console.log(o.material)
+                let newMaterial = new THREE.MeshBasicMaterial({color: 0xffffff,envMap:stellarBackground,reflectivity:0.6,vertexColors: true})
+                o.material = newMaterial;
+            } 
+            
+          });
+          
 	// scene.add(xWing.scene)
     callback()
 	})
@@ -11,7 +22,7 @@ function createRings(){
     rings =[];
     ringBoxes=[];
     const geometry = new THREE.TorusGeometry( 10, 3, 16, 100 );
-    const material = new THREE.MeshToonMaterial( { color: 0xffff00 } );
+    const material = new THREE.MeshBasicMaterial( { color: 0xffff00,envMap:stellarBackground,reflectivity:0.5} );
     // torus = new THREE.Mesh( geometry, material );
     // scene.add( torus );
 

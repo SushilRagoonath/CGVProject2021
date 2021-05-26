@@ -4,14 +4,20 @@ scene = new THREE.Scene();
 camera = new THREE.PerspectiveCamera( 85, window.innerWidth / window.innerHeight, 0.1, 1000 );
 clock = new THREE.Clock();
 
-lightAmbient = new THREE.AmbientLight(0x2FFFFFF); // soft white light
+// lightAmbient = new THREE.AmbientLight(0x2FFFFFF); // soft white light
 particleLight = new THREE.PointLight( 0xff0000, 1, 100 )
-renderer =new THREE.WebGLRenderer();
+directionalLight = new THREE.DirectionalLight( 0xffffff, 1);
+scene.add(directionalLight)
+renderer =new THREE.WebGLRenderer({antialias:true});
 renderer.setSize( window.innerWidth, window.innerHeight );
 document.body.appendChild( renderer.domElement );
-scene.add(lightAmbient);
+// composer = new THREE.EffectComposer( renderer );
+// let bloom = new THREE.BloomPass();
+// composer.addPass( bloom );
+
+// scene.add(lightAmbient);
 const geometry = new THREE.BoxGeometry( 1, 1, 1 );
-const material = new THREE.MeshBasicMaterial( {color: 0x00ff00} );
+const material = new THREE.MeshBasicMaterial( {color: 0x00ff00,envMap:stellarBackground} );
 const cube = new THREE.Mesh( geometry, material );
 var cubeBox = new THREE.Box3();
 cube.geometry.computeBoundingBox();
@@ -19,7 +25,7 @@ cubeBox.copy(cube.geometry.boundingBox)
 console.log("reference box AABB",cubeBox)
 scene.add( cube ); //reference cube
 
-let stellarBackground = new THREE.CubeTextureLoader()
+stellarBackground = new THREE.CubeTextureLoader()
 .setPath( '../assets/stardust/' )
 .load( [
 	'posx.png',
@@ -29,6 +35,13 @@ let stellarBackground = new THREE.CubeTextureLoader()
 	'posz.png',
 	'negz.png'
 ] );
+
+//audio 
+listener = new THREE.AudioListener();
+camera.add(listener)
+sound = new THREE.Audio(listener)
+audioLoader = new THREE.AudioLoader()
+audioLoader.load()
 createRings()
 loadSpaceShip(function(){
 
@@ -49,7 +62,7 @@ loadSpaceShip(function(){
 console.log(player)
 
 scene.background = stellarBackground;
-
+scene.environment = stellarBackground;
 
 function animate() {
 	var delta = clock.getDelta();
@@ -68,17 +81,18 @@ function animate() {
 	}
 	setTimeout(function(){ //setTimeout for delaying deletion
 		for (let index = 0; index < ringsToDelete.length; index++) {
-			console.log(scene.getObjectByName(ringsToDelete[index])
-			)
+			// console.log(scene.getObjectByName(ringsToDelete[index])
+			// )
 			scene.remove(scene.getObjectByName(ringsToDelete[index]) )
 			
 		}
 	},100)
 
-	if(cubeBox.intersectsBox(xWingBox)){
-		console.log('collision?')
-	}
+	// if(cubeBox.intersectsBox(xWingBox)){
+	// 	console.log('collision?')
+	// }
     renderer.render( scene, camera );
+	// composer.render()
 	requestAnimationFrame( animate );
 }
 setTimeout(animate,500) // may need to be longer for more assets

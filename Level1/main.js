@@ -1,23 +1,24 @@
-const sceneHome = new THREE.Scene();
-const camera = new THREE.PerspectiveCamera( 80, window.innerWidth / window.innerHeight, 0.1, 1000 );
 
-const renderer = new THREE.WebGLRenderer();
+
+scene = new THREE.Scene();
+camera = new THREE.PerspectiveCamera( 85, window.innerWidth / window.innerHeight, 0.1, 1000 );
+clock = new THREE.Clock();
+
+lightAmbient = new THREE.AmbientLight(0x2FFFFFF); // soft white light
+particleLight = new THREE.PointLight( 0xff0000, 1, 100 )
+renderer =new THREE.WebGLRenderer();
 renderer.setSize( window.innerWidth, window.innerHeight );
 document.body.appendChild( renderer.domElement );
-const clock = new THREE.Clock();
-const geometry = new THREE.BoxGeometry();
-const material = new THREE.MeshToonMaterial( { color: 0x00ff00 } );
+scene.add(lightAmbient);
+const geometry = new THREE.BoxGeometry( 1, 1, 1 );
+const material = new THREE.MeshBasicMaterial( {color: 0x00ff00} );
 const cube = new THREE.Mesh( geometry, material );
-let lightAmbient = new THREE.AmbientLight(0x2FFFFFF); // soft white light
-let particleLight = new THREE.PointLight( 0xff0000, 1, 100 );
-sceneHome.add(lightAmbient);
+var cubeBox = new THREE.Box3();
+cube.geometry.computeBoundingBox();
+cubeBox.copy(cube.geometry.boundingBox)
+console.log("reference box AABB",cubeBox)
+scene.add( cube ); //reference cube
 
-var firstcontrols = new THREE.FirstPersonControls(camera);
-firstcontrols.lookSpeed = 0.05;
-firstcontrols.movementSpeed = 10;
-
-
-sceneHome.add( cube );
 let stellarBackground = new THREE.CubeTextureLoader()
 .setPath( '../assets/stardust/' )
 .load( [
@@ -28,29 +29,56 @@ let stellarBackground = new THREE.CubeTextureLoader()
 	'posz.png',
 	'negz.png'
 ] );
-//camera.position.z = 5;
+createRings()
+loadSpaceShip(function(){
 
-//GLOBALS
-// currentScene=sceneHome;
-currentScene = loadScene1();
-currentScene.background = stellarBackground;
+	xWingBox = new THREE.Box3();
+	xWingBox.setFromObject(xWing.scene);
+	console.log("xWing AABB",xWingBox)
+	player = new THREE.Group();
+	player.add( camera );
+	player.add( xWing.scene);
+	scene.add( player );
+	firstcontrols= new THREE.FirstPersonControls(player);
+	firstcontrols.lookSpeed = 0.05;
+	firstcontrols.movementSpeed = 10;
+	// camera.position.set( 0, 2,5*Math.sin(clock.getElapsedTime()));
+	// animate()// watch out for async. May need to be put in a setTimeout
+	
+})
+console.log(player)
 
-camera.position.set( 0, 0, 10);
+scene.background = stellarBackground;
 
-console.log(currentScene)
+
 function animate() {
 	var delta = clock.getDelta();
-	cube.rotation.z+=0.02
-    cube.rotation.y+=0.02
-    cube.rotation.x+=0.02
-
+	camera.position.set( 0, 1,-0.5);
+	// firstcontrols.moveForward=true
+	firstcontrols.movementSpeed= 25
 	firstcontrols.update(delta);
+	xWingBox.setFromObject(xWing.scene)
+	let ringsToDelete=[]; //keeps track of collided rings
+	for (let index = 0; index <ringBoxes.length; index++) {
+		const box = ringBoxes[index];
+		if(box.intersectsBox(xWingBox)){
+			console.log('ring collision')
+			ringsToDelete.push("ring"+String(index) ) 
+		}
+	}
+	setTimeout(function(){ //setTimeout for delaying deletion
+		for (let index = 0; index < ringsToDelete.length; index++) {
+			console.log(scene.getObjectByName(ringsToDelete[index])
+			)
+			scene.remove(scene.getObjectByName(ringsToDelete[index]) )
+			
+		}
+	},100)
 
-    //camera.rotation.x+=0.001
-	//     camera.position.z = 5*Math.sin(clock.getElapsedTime())
-    //camera.position.y = 5*Math.cos(clock.getElapsedTime())
-    renderer.render( currentScene, camera );
+	if(cubeBox.intersectsBox(xWingBox)){
+		console.log('collision?')
+	}
+    renderer.render( scene, camera );
 	requestAnimationFrame( animate );
 }
-animate()
-
+setTimeout(animate,500) // may need to be longer for more assets

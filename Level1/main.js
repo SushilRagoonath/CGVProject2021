@@ -54,10 +54,27 @@ scene.background = stellarBackground;
 function animate() {
 	var delta = clock.getDelta();
 	camera.position.set( 0, 1,-0.5);
-	firstcontrols.moveForward=true
+	// firstcontrols.moveForward=true
 	firstcontrols.movementSpeed= 25
 	firstcontrols.update(delta);
 	xWingBox.setFromObject(xWing.scene)
+	let ringsToDelete=[]; //keeps track of collided rings
+	for (let index = 0; index <ringBoxes.length; index++) {
+		const box = ringBoxes[index];
+		if(box.intersectsBox(xWingBox)){
+			console.log('ring collision')
+			ringsToDelete.push("ring"+String(index) ) 
+		}
+	}
+	setTimeout(function(){ //setTimeout for delaying deletion
+		for (let index = 0; index < ringsToDelete.length; index++) {
+			console.log(scene.getObjectByName(ringsToDelete[index])
+			)
+			scene.remove(scene.getObjectByName(ringsToDelete[index]) )
+			
+		}
+	},100)
+
 	if(cubeBox.intersectsBox(xWingBox)){
 		console.log('collision?')
 	}

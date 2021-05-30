@@ -4,7 +4,8 @@ var renderer;
 var stellarBackground
 var clock = new THREE.Clock();
 var lightAmbient;
-var directionalLight;
+var directionalLight1;
+var directionalLight2;
 var particleLightl;
 var firstcontrols;
 var loader = new THREE.GLTFLoader();
@@ -17,3 +18,6 @@ var composer;
 var listener; //audio
 var audioLoader;
 var sound;
+var textureLoader;
+var snowRoughness;
+var snowNormal;

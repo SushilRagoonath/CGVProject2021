@@ -5,23 +5,31 @@ camera = new THREE.PerspectiveCamera( 85, window.innerWidth / window.innerHeight
 clock = new THREE.Clock();
 
 lightAmbient = new THREE.AmbientLight(0x8c8c8c); // soft white light
-particleLight = new THREE.PointLight( 0xff0000, 1, 100 )
 directionalLight1 = new THREE.DirectionalLight( 0x0f672e, 0.5);
 directionalLight1.position.x=-1
 directionalLight1.position.y=0
+directionalLight1.castShadow = true; 
+
 directionalLight2 = new THREE.DirectionalLight( 0xea5d04, 0.5);
 directionalLight2.position.x=1
 directionalLight2.position.y=0
+directionalLight2.castShadow = true; 
 scene.add(directionalLight1)
 scene.add(directionalLight2)
 renderer =new THREE.WebGLRenderer({antialias:true});
+renderer.shadowMap.enabled = true;
+
+renderer.shadowMap.type = THREE.PCFShadowMap;
 renderer.setSize( window.innerWidth, window.innerHeight );
 document.body.appendChild( renderer.domElement );
+
 scene.add(lightAmbient);
 const geometry = new THREE.BoxGeometry( 1, 1, 1 );
 const material = new THREE.MeshBasicMaterial( {color: 0x00ff00,envMap:stellarBackground} );
-textureLoader = new THREE.TextureLoader()
 
+
+textureLoader = new THREE.TextureLoader()
+loadTextures()
 stellarBackground = new THREE.CubeTextureLoader()
 .setPath( '../assets/stardust/' )
 .load( [
@@ -32,13 +40,9 @@ stellarBackground = new THREE.CubeTextureLoader()
 	'posz.png',
 	'negz.png'
 ] );
-loadTextures()
-setTimeout(function(){
-createRings()
 
-},200)
+setTimeout(function(){ createRings() },200)
 loadSpaceShip(function(){ //callback after loaded
-
 	xWingBox = new THREE.Box3();
 	xWingBox.setFromObject(xWing.scene);
 	console.log("xWing AABB",xWingBox)
@@ -51,36 +55,29 @@ loadSpaceShip(function(){ //callback after loaded
 	firstcontrols= new THREE.FirstPersonControls(player);
 	firstcontrols.lookSpeed = 0.05;
 	firstcontrols.movementSpeed = 10;
-	// camera.position.set( 0, 2,5*Math.sin(clock.getElapsedTime()));
+
+	xWingShadow = new ShadowMesh( xWing.scene);
+	scene.add( xWingShadow );
+
+	camera.position.set( 0, 2,5*Math.sin(clock.getElapsedTime()));
 	// animate()// watch out for async. May need to be put in a setTimeout
 	
 })
-loadBoulders() 
-console.log(player)
+createAtmosphericBoulders()
+createDodgeBoulders()
 
 scene.background = stellarBackground;
 scene.environment = stellarBackground;
 
-listener = new THREE.AudioListener();
-camera.add( listener );
 
-// create a global audio source
-sound = new THREE.Audio( listener );
-
-// load a sound and set it as the Audio object's buffer
-audioLoader = new THREE.AudioLoader();
-audioLoader.load( '../assets/sound/SpaceAmbience.mp3', function( buffer ) {
-	sound.setBuffer( buffer );
-	sound.setLoop( true );
-	sound.setVolume( 0.1 );
-	sound.play();
-});
+setupAudio()
 
 function animate() {
 	var delta = clock.getDelta();
 	camera.position.set( 0, 1,-0.5);
+	camera.position.set( 0, 2,5*Math.sin(clock.getElapsedTime()));
 	// firstcontrols.moveForward=true //keeps ship moving
-	firstcontrols.movementSpeed= 25
+	firstcontrols.movementSpeed= 85
 	firstcontrols.update(delta);
 	xWingBox.setFromObject(xWing.scene)
 	let ringsToDelete=[]; //keeps track of collided rings
@@ -100,9 +97,9 @@ function animate() {
 		}
 
 	},100)
-
+	updateTimer()
     renderer.render( scene, camera );
 	// composer.render()
 	requestAnimationFrame( animate );
 }
-setTimeout(animate,500) // may need to be longer for more assets
+setTimeout(animate,1000) // may need to be longer for more assets

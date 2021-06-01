@@ -3,9 +3,7 @@
 	<head>
 		<meta charset="utf-8">
 		<title>My first three.js app</title>
-		<style>
-			body { margin: 0; }
-		</style>
+		<link rel="stylesheet" type="text/css" href="../common/style.css" media="screen"/>
 	</head>
 	<body>
 		<script src ="../dependancies/three.js"></script>
@@ -22,6 +20,20 @@
 		<script src ="scene1.js"> </script>
 		<script src ="main.js"> </script>
 		<!--script src ="controls.js"> </script-->
-		
+		    <div id="app"></div>
+    <div class="info">
+      <div class="info-item">
+        <h1 class="item-title">Letters</h1>
+        <h2 class="item-data" id="letter-count">24</h2>
+      </div>
+      <div class="info-item">
+        <h1 class="item-title">Timer</h1>
+        <h2 id="timer" class="item-data" >0</h2>
+      </div>
+
+      <div id="tutorial-info1" class="info-text">Move your mouse to change direction</div>
+    </div>
+
 	</body>
+
 </html>

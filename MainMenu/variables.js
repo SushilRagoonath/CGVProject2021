@@ -3,9 +3,7 @@ var camera = new THREE.PerspectiveCamera( 80, window.innerWidth / window.innerHe
 var renderer;
 var stellarBackground
 var clock = new THREE.Clock();
-var lightAmbient;
-var directionalLight1;
-var directionalLight2;
+var spotlight;
 var particleLightl;
 var firstcontrols;
 var loader = new THREE.GLTFLoader();
@@ -14,9 +12,8 @@ var points;
 var timeLeft;
 var xWing;
 var xWingBox;
-var rings;
-var ringBoxes;
-var boulderBoxes;
+var turret;
+var ground;
 var composer;
 var listener; //audio
 var audioLoader;
@@ -24,3 +21,4 @@ var sound;
 var textureLoader;
 var snowRoughness;
 var snowNormal;
+var snowBump;

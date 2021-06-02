@@ -24,3 +24,4 @@ var sound;
 var textureLoader;
 var snowRoughness;
 var snowNormal;
+var mapCamera, mapWidth = 160, mapHeight = 160; //minimap variables

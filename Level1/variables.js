@@ -33,3 +33,5 @@ var asteroidAlbedo;
 var floorSpec;
 var flagBox;
 var checkeredTexture;
+var mapCamera, mapWidth = 160, mapHeight = 160; //minimap variables
+

@@ -14,8 +14,11 @@ var points;
 var timeLeft;
 var xWing;
 var xWingBox;
+const ringNumber =30;
 var rings;
 var ringBoxes;
+var ringsRemoved;
+var instancedCollisionBoulder;
 var boulderBoxes;
 var composer;
 var listener; //audio
@@ -24,4 +27,11 @@ var sound;
 var textureLoader;
 var snowRoughness;
 var snowNormal;
+var hp;
+var flag;
+var asteroidAlbedo;
+var floorSpec;
+var flagBox;
+var checkeredTexture;
 var mapCamera, mapWidth = 160, mapHeight = 160; //minimap variables
+

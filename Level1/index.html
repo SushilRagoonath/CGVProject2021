@@ -13,6 +13,8 @@
 		<script src="../dependancies/RenderPass.js"></script>
 		<script src="../dependancies/EffectComposer.js"></script>
 		<script src="../dependancies/BloomPass.js"></script>
+		<script src="player.js"></script>
+		<script src="../common/flag.js"></script>
 		<script src="../common/util.js"></script>
 		<script src ="variables.js"></script>
 		<script src ="scene1.js"> </script>
@@ -21,17 +23,21 @@
 		    <div id="app"></div>
     <div class="info">
       <div class="info-item">
-        <h1 class="item-title">Letters</h1>
-        <h2 class="item-data" id="letter-count">24</h2>
+        <h1 class="item-title">HP</h1>
+        <h2 id="hp" class="item-data" >50</h2>
       </div>
-      <div class="info-item">
+    </div>
+    <div id="tutorial-info1" class="info-text">Move your mouse to change direction</div>
+    <div class="info-right">
+      <div class="info-item-right">
         <h1 class="item-title">Timer</h1>
         <h2 id="timer" class="item-data" >0</h2>
       </div>
-
-      <div id="tutorial-info1" class="info-text">Move your mouse to change direction</div>
     </div>
-
+    <div id="game-over" class="message-large">
+        yo
+    </div>
+    
 	</body>
 
 </html>

@@ -18,9 +18,8 @@ const randomizeMatrix = function () {
         quaternion.setFromEuler( rotation );
 
         scale.x = scale.y = scale.z = Math.random() * s;
-
+        console.log('randomized')
         matrix.compose( position, quaternion, scale );
-
     };
 
 }();

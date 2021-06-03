@@ -1,3 +1,58 @@
+function resetLevel(e){
+    var node = document.getElementById("tutorial-info1")
+    
+    if(e.key==="Enter"){
+        if(node.innerHTML==="press enter to confirm reset"){
+            node.innerHTML="Move your mouse to change direction"
+            restartLevel()
+        }
+    }
+    if(e.key==="Escape"){
+        node.innerHTML= "press enter to confirm reset"
+        return
+    }
+    if(e.key==="r"){
+        showGameOver()
+       setTimeout(  restartLevel,2000)
+    }
+
+}
+function restartLevel(){
+    player.position.set(0,0,0)
+    player.rotation.set(0,0,0)
+    timeLeft = 10;
+    hp = 50;
+    firstcontrols.moveForward=false
+    destroyRings()
+    createRings()
+    sound.stop()
+    sound.play()
+}
+function destroyRings(){
+        for (let index = 0; index < ringNumber; index++) {
+            scene.remove(scene.getObjectByName("ring"+String(index)) )
+        }
+    delete ringBoxes;
+    ringBoxes = [];
+}
+function showGameOver(){
+    let go =document.getElementById("game-over");
+    go.innerHTML= "Restarting level"
+    setTimeout(function(){
+        go.innerHTML=""
+    },1000)
+       
+
+}
+function showGameWon(){
+    let go =document.getElementById("game-over");
+    go.innerHTML= "You Won! achieved " +String(ringsRemoved)+'/' +String(ringNumber) +" boxes" 
+    setTimeout(function(){
+        go.innerHTML=""
+        window.location.href='../MainMenu'
+    },5000)
+    player.position.set(0,0,0)
+}
 function loadSpaceShip(callback){
     loader.load('../assets/x-wing/modified-x-wing.glb',function ( gltf ) {
         xWing= gltf;
@@ -6,7 +61,6 @@ function loadSpaceShip(callback){
         xWing.scene.traverse((o) => {
             
             if (o.isMesh){
-                console.log(o.material)
                 let newMaterial = new THREE.MeshPhysicalMaterial({color: 0xffffff,envMap:stellarBackground,roughness:0.1,metalness:0.7,vertexColors: true})
                 o.castShadow = true;
                 o.receiveShadow = true;
@@ -23,19 +77,26 @@ function createAtmosphericBoulders(){
     loader.load('../assets/Boulder/PUSHILIN_boulder.gltf',function ( gltf ) {
         gltf.scene.traverse((o) => {
             if (o.isMesh){//box size, location
-                makeInstanced(o.geometry,500,new THREE.Vector3(300,600,5000),new THREE.Vector3(-300,0,0),50)
-                makeInstanced(o.geometry,500,new THREE.Vector3(300,600,5000),new THREE.Vector3(300,0,0),50)
-                makeInstanced(o.geometry,500,new THREE.Vector3(300,400,5000),new THREE.Vector3(0,0,0),15)
+                makeInstancedWithCollision(o.geometry,500,new THREE.Vector3(300,600,5000),new THREE.Vector3(300,0,0),50,-10)
+                makeInstancedWithCollision(o.geometry,500,new THREE.Vector3(300,400,5000),new THREE.Vector3(0,0,0),15,-5)
+                makeInstancedWithCollision(o.geometry,500,new THREE.Vector3(300,600,5000),new THREE.Vector3(-300,0,0),50,-10)
             } 
           });
     })
+}
+function updateUI(){
+    let timer = document.getElementById("timer")
+    timer.innerHTML = Math.round(timeLeft)
+    let hElement = document.getElementById("hp")
+    hElement.innerHTML = hp;
+    
 }
 
 function createDodgeBoulders(){
     loader.load('../assets/Boulder/PUSHILIN_boulder.gltf',function ( gltf ) {
         gltf.scene.traverse((o) => {
             if (o.isMesh){//box size, location
-                makeInstancedWithCollision(o.geometry,100,new THREE.Vector3(300,300,1500),new THREE.Vector3(0,0,+1500),100)
+                makeInstancedWithCollision(o.geometry,250,new THREE.Vector3(400,400,2000),new THREE.Vector3(0,0,+2000),100,-45)
             } 
           });
     })
@@ -43,6 +104,7 @@ function createDodgeBoulders(){
 function createRings(){
     rings =[];
     ringBoxes=[];
+    ringsRemoved =0;
     const geometry = new THREE.TorusGeometry( 10, 3, 16, 100 );
     console.log('before ring',snowRoughness)
     const rock2 = new THREE.MeshPhysicalMaterial(
@@ -51,7 +113,7 @@ function createRings(){
     // torus = new THREE.Mesh( geometry, material );
     // scene.add( torus );
     //good rocks
-    for (let index = 0; index < 10; index++) {
+    for (let index = 0; index < ringNumber; index++) {
         let x = 70 * Math.random() 
         let z = 30* Math.random()  +85 *(index+1) 
         let y = 5 * Math.random()
@@ -67,9 +129,9 @@ function createRings(){
         ringBoxes.push(box)
 
         scene.add(torus)
-        const helper = new THREE.Box3Helper( box, 0xffff00 );
-        helper.name = "helper" +String(index)
-        scene.add(helper)
+        // const helper = new THREE.Box3Helper( box, 0xffff00 );
+        // helper.name = "helper" +String(index)
+        // scene.add(helper)
     }
 
 }
@@ -82,12 +144,24 @@ function loadTextures(){
         snowNormal= texture;
         console.log('snow normal loaded')
     })
+    textureLoader.load('../assets/checkeredTexture.png',function(texture){
+        checkeredTexture= texture;
+        console.log('check  loaded')
+    })
+    // textureLoader.load('../assets/Asteroid/Asteroids_BaseColor.png',function(texture){
+    //     asteroidAlbedo= texture;
+    //     console.log('asteroid albedo loaded')
+    // })
+    // textureLoader.load('../assets/floor6/floor_tiles_06_spec_1k.png',function(texture){
+    //     texture.repeat.set(0.1, 0.1);
+    //     floorSpec= texture;
+    //     console.log('floor spec loaded')
+    // })
 }
 function makeInstanced( geometry,count,center,offset,s ) {
 
     const matrix = new THREE.Matrix4();
-    const material = new THREE.MeshPhysicalMaterial({color:0x8c7012})
-    console.log(center)
+    const material = new THREE.MeshPhysicalMaterial({color:0x8c7012}) //,map:asteroidAlbedo
     const mesh = new THREE.InstancedMesh( geometry, material, count,s );
 
     for ( let i = 0; i < count; i ++ ) {
@@ -99,19 +173,26 @@ function makeInstanced( geometry,count,center,offset,s ) {
 
     scene.add( mesh );
 }
-function makeInstancedWithCollision( geometry,count,center,offset,s ) {
+function makeInstancedWithCollision( geometry,count,center,offset,s,scalar ) {
 
     const matrix = new THREE.Matrix4();
     const material = new THREE.MeshPhysicalMaterial({color:0x8c7012})
-    console.log(center)
+    boulderBoxes = []
     mesh = new THREE.InstancedMesh( geometry, material, count,s );
+    mesh.name="instancedCollisionBoulder"
         mesh.castShadow = true;
         mesh.receiveShadow = true;
     for ( let i = 0; i < count; i ++ ) {
 
         randomizeMatrix( matrix,center,offset,s );
         mesh.setMatrixAt( i, matrix );
-
+        let box = new THREE.Box3()
+        box.copy( mesh.geometry.boundingBox).applyMatrix4( matrix );
+        box.expandByScalar(scalar)
+        boulderBoxes.push(box)
+        // helper = new THREE.Box3Helper( box, 0xffff00 );
+        // helper.name = "bhelper" +String(i)
+        // scene.add(helper)
     }
 
     scene.add( mesh );
@@ -131,8 +212,4 @@ function setupAudio(){
         sound.setVolume( 0.1 );
         sound.play();
     });
-}
-function updateTimer(){
-    document.getElementById("timer")
-    timer.innerHTML = Math.round( clock.getElapsedTime())
 }

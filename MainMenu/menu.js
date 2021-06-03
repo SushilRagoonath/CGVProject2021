@@ -17,6 +17,7 @@ function createTurret(){
     loader.load('../assets/turret/sphere_turret_fixed.glb',function(glb){
         console.log('turret loaded')
         turret = glb;
+        turret.scene.scale.set(0.3,0.3,0.3)
         turret.scene.traverse((o) => {
             
             if (o.isMesh){

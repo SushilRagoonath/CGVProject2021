@@ -1,33 +1,49 @@
-function resetLevel(e){
+//spins our flag around the axis 
+function animateFlag(){
+    flag.rotation.set(0, 2*clock.getElapsedTime()  , 0.2 *Math.sin(clock.getElapsedTime() * 0.1))
+}
+
+function animateRings() {
+    for (var i = 0; i < ringNumber; i++) {
+        let object = scene.getObjectByName("ring"+String(i))
+        if(object===undefined){
+            continue
+        }
+        object.rotation.set(2*clock.getElapsedTime()+i , 2*clock.getElapsedTime()+i  , 0)
+    }
+    
+}
+
+//handles input for level related function
+function levelInput(e){
     var node = document.getElementById("tutorial-info1")
     
-    if(e.key==="Enter"){
-        if(node.innerHTML==="press enter to confirm reset"){
-            node.innerHTML="Move your mouse to change direction"
-            restartLevel()
-        }
-    }
-    if(e.key==="Escape"){
-        node.innerHTML= "press enter to confirm reset"
-        return
-    }
     if(e.key==="r"){
         showGameOver()
-       setTimeout(  restartLevel,2000)
+        setTimeout(  restartLevel,2000)
+    }
+    else if(e.key===" "){
+        gamePaused=false;
+
+        let t2 = document.getElementById("tutorial-info2")
+        t2.innerHTML = ""
     }
 
 }
+//resets entire level
 function restartLevel(){
     player.position.set(0,0,0)
     player.rotation.set(0,0,0)
     timeLeft = 10;
     hp = 50;
-    firstcontrols.moveForward=false
+    gamePaused = true;
     destroyRings()
     createRings()
     sound.stop()
     sound.play()
+
 }
+// destroys boxes for rings and rings from scene
 function destroyRings(){
         for (let index = 0; index < ringNumber; index++) {
             scene.remove(scene.getObjectByName("ring"+String(index)) )
@@ -35,24 +51,25 @@ function destroyRings(){
     delete ringBoxes;
     ringBoxes = [];
 }
+//html message showing game failure
 function showGameOver(){
     let go =document.getElementById("game-over");
     go.innerHTML= "Restarting level"
-    setTimeout(function(){
+    setTimeout(function(){//delay makes it dissappear after 1s
         go.innerHTML=""
     },1000)
-       
-
 }
+//html message that shows when you finish the level
 function showGameWon(){
     let go =document.getElementById("game-over");
     go.innerHTML= "You Won! achieved " +String(ringsRemoved)+'/' +String(ringNumber) +" boxes" 
     setTimeout(function(){
         go.innerHTML=""
-        window.location.href='../MainMenu'
+        window.location.href='../MainMenu'// routes back to menu after 5 seconds
     },5000)
     player.position.set(0,0,0)
 }
+
 function loadSpaceShip(callback){
     loader.load('../assets/x-wing/modified-x-wing.glb',function ( gltf ) {
         xWing= gltf;
@@ -68,7 +85,7 @@ function loadSpaceShip(callback){
             } 
             
           });
-	// scene.add(xWing.scene)
+	//use callback for correct initialisation of player
     callback()
 	})
  
@@ -77,9 +94,10 @@ function createAtmosphericBoulders(){
     loader.load('../assets/Boulder/PUSHILIN_boulder.gltf',function ( gltf ) {
         gltf.scene.traverse((o) => {
             if (o.isMesh){//box size, location
-                makeInstancedWithCollision(o.geometry,500,new THREE.Vector3(300,600,5000),new THREE.Vector3(300,0,0),50,-10)
-                makeInstancedWithCollision(o.geometry,500,new THREE.Vector3(300,400,5000),new THREE.Vector3(0,0,0),15,-5)
-                makeInstancedWithCollision(o.geometry,500,new THREE.Vector3(300,600,5000),new THREE.Vector3(-300,0,0),50,-10)
+                makeInstancedWithCollision(o.geometry,500,new THREE.Vector3(300,600,5000),new THREE.Vector3(300,0,0),50,-5)
+                makeInstancedWithCollision(o.geometry,500,new THREE.Vector3(300,400,5000),new THREE.Vector3(0,0,0),15,0)
+                makeInstancedWithCollision(o.geometry,500,new THREE.Vector3(300,600,5000),new THREE.Vector3(-300,0,0),50,-5)
+                makeInstancedWithCollision(o.geometry,250,new THREE.Vector3(400,400,2000),new THREE.Vector3(0,0,+2000),100,-45)
             } 
           });
     })
@@ -92,15 +110,7 @@ function updateUI(){
     
 }
 
-function createDodgeBoulders(){
-    loader.load('../assets/Boulder/PUSHILIN_boulder.gltf',function ( gltf ) {
-        gltf.scene.traverse((o) => {
-            if (o.isMesh){//box size, location
-                makeInstancedWithCollision(o.geometry,250,new THREE.Vector3(400,400,2000),new THREE.Vector3(0,0,+2000),100,-45)
-            } 
-          });
-    })
-}
+
 function createRings(){
     rings =[];
     ringBoxes=[];
@@ -110,9 +120,6 @@ function createRings(){
     const rock2 = new THREE.MeshPhysicalMaterial(
      { color: 0x943e00,reflectivity:0.6,envMap:stellarBackground,roughness:0.7,metalness:0.2,roughnessMap:snowRoughness,normalMap:snowNormal,emissive:0x212121} 
         );
-    // torus = new THREE.Mesh( geometry, material );
-    // scene.add( torus );
-    //good rocks
     for (let index = 0; index < ringNumber; index++) {
         let x = 70 * Math.random() 
         let z = 30* Math.random()  +85 *(index+1) 
@@ -120,11 +127,13 @@ function createRings(){
         torus = new THREE.Mesh( geometry, rock2 );
         torus.castShadow = true;
         torus.receiveShadow = true;
-        torus.name="ring" +String(index) //sets name so we can easilty delete later
+        //sets name so we can easilty delete later
+        torus.name="ring" +String(index) 
         torus.position.z = z
         torus.position.y = y
         torus.position.x = x
         rings.push(torus)
+        //creates hitbox for each ring
         let box = new THREE.Box3().setFromObject(torus)
         ringBoxes.push(box)
 
@@ -148,6 +157,21 @@ function loadTextures(){
         checkeredTexture= texture;
         console.log('check  loaded')
     })
+    textureLoader.load('../assets/brick7/castle_brick_07_diff_1k.png',function(texture){
+        console.log('check  loaded')
+        brickTexture= texture;
+        brickTexture.repeat.set(0.1,0.1)
+    })
+    textureLoader.load('../assets/brick7/castle_brick_07_nor_1k.png',function(texture){
+        console.log('check  loaded')
+        brickNormal= texture;
+        brickNormal.repeat.set(0.1,0.1)
+    })
+    textureLoader.load('../assets/brick7/castle_brick_07_rough_1k.png',function(texture){
+        console.log('check  loaded')
+        brickRoughness = texture;
+        brickRoughness.repeat.set(0.1,0.1)
+    })
     // textureLoader.load('../assets/Asteroid/Asteroids_BaseColor.png',function(texture){
     //     asteroidAlbedo= texture;
     //     console.log('asteroid albedo loaded')
@@ -158,26 +182,15 @@ function loadTextures(){
     //     console.log('floor spec loaded')
     // })
 }
-function makeInstanced( geometry,count,center,offset,s ) {
 
-    const matrix = new THREE.Matrix4();
-    const material = new THREE.MeshPhysicalMaterial({color:0x8c7012}) //,map:asteroidAlbedo
-    const mesh = new THREE.InstancedMesh( geometry, material, count,s );
-
-    for ( let i = 0; i < count; i ++ ) {
-
-        randomizeMatrix( matrix,center,offset ,s);
-        mesh.setMatrixAt( i, matrix );
-
-    }
-
-    scene.add( mesh );
-}
+//takes in geom, number of geom we want, the center of the placement area, the offset to place from center
+// s for scale, scalar is for reducing the size of the hitbox
 function makeInstancedWithCollision( geometry,count,center,offset,s,scalar ) {
 
     const matrix = new THREE.Matrix4();
     const material = new THREE.MeshPhysicalMaterial({color:0x8c7012})
     boulderBoxes = []
+    // the mesh for instancing
     mesh = new THREE.InstancedMesh( geometry, material, count,s );
     mesh.name="instancedCollisionBoulder"
         mesh.castShadow = true;
@@ -185,8 +198,10 @@ function makeInstancedWithCollision( geometry,count,center,offset,s,scalar ) {
     for ( let i = 0; i < count; i ++ ) {
 
         randomizeMatrix( matrix,center,offset,s );
+        //sets the mode-view matrix in the instanced buffer for performant rendering
         mesh.setMatrixAt( i, matrix );
         let box = new THREE.Box3()
+        //sets the box for each rock
         box.copy( mesh.geometry.boundingBox).applyMatrix4( matrix );
         box.expandByScalar(scalar)
         boulderBoxes.push(box)
@@ -194,9 +209,10 @@ function makeInstancedWithCollision( geometry,count,center,offset,s,scalar ) {
         // helper.name = "bhelper" +String(i)
         // scene.add(helper)
     }
-
+    //adds to scene
     scene.add( mesh );
 }
+//for atmospheric sound
 function setupAudio(){
     listener = new THREE.AudioListener();
     camera.add( listener );

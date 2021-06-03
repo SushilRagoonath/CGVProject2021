@@ -1,3 +1,4 @@
+//holds all variables we may need troughout the scenes lifetime
 var scene = new THREE.Scene();
 var camera = new THREE.PerspectiveCamera( 80, window.innerWidth / window.innerHeight, 0.1, 1000 );
 var renderer;
@@ -22,3 +23,7 @@ var textureLoader;
 var snowRoughness;
 var snowNormal;
 var snowBump;
+var checkeredTexture;
+var brickTexture;
+var brickRoughness;
+var brickNormal;

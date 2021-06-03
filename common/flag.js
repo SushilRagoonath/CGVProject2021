@@ -1,8 +1,8 @@
 function createFlag(env,texture){
                 const flag = new THREE.Group();
-
+                flag.name = "flag"
                 var flag_geometry = new THREE.BoxGeometry( 50, 40, 50 );
-                var flag_material = new THREE.MeshStandardMaterial( { color: 0xff0000} );
+                var flag_material = new THREE.MeshPhysicalMaterial( { color: 0xffffff} );
                 const cube = new THREE.Mesh( flag_geometry, flag_material );
                 cube.name="flagBase"
                 cube.position.set(0,0,0)

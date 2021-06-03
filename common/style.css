@@ -13,6 +13,20 @@ body {
   height: 100vh;
   overflow: hidden;
 }
+.scroll-text {
+  position: absolute;
+  color: red;
+
+  width: 50%;
+  top: 70%;
+  left: 50%;
+  transform: translate(-50%, 0%)
+
+}
+@keyframes scroll {
+  from { top: 0; transform: translateZ(0) rotateX(20deg); }
+  to { top: -7500px; transform: translateZ(-2500px) rotateX(21deg); }
+}
 .message-large{
 
   position: absolute;
@@ -20,7 +34,7 @@ body {
   bottom: 50%;
   text-align: center;
   color: #6356E5;
-  font-size: 5rem;
+  font-size: 3rem;
   transform: translate(-50%, -50%)
 }
 canvas {

@@ -1,4 +1,7 @@
-
+function animateFlag(){
+    flag.position.set( 4* Math.sin(clock.getElapsedTime()), 0, 4 *Math.cos(clock.getElapsedTime() ))
+    flag.rotation.set(0, 2*clock.getElapsedTime()  , 0.2 *Math.sin(clock.getElapsedTime() * 0.1))
+}
 function createSpotlight( color ) {
 
     const newObj = new THREE.SpotLight( color, 1 );
@@ -13,8 +16,19 @@ return newObj;
 
 }
 
+function showCredits(){
+    let container = document.getElementById("body")
+    let text = document.createElement("OBJECT")
+    text.data = "../assets/AssetAttributions.txt"
+    text.className = "scroll-text"
+    container.appendChild(text)
+    setTimeout(function(){
+        text.remove()
+    },4000)
+}
+//loads in turret 
 function createTurret(){
-    loader.load('../assets/turret/sphere_turret_fixed.glb',function(glb){
+    loader.load('../assets/turret/SphereTurret.glb',function(glb){
         console.log('turret loaded')
         turret = glb;
         turret.scene.scale.set(0.3,0.3,0.3)
@@ -50,22 +64,12 @@ function loadSpaceShip(callback){
             } 
             
           });
-
+        //callback to ensure correct initialisation
     callback()
     })
  
 }
-function createAtmosphericBoulders(){
-    loader.load('../assets/Boulder/PUSHILIN_boulder.gltf',function ( gltf ) {
-        gltf.scene.traverse((o) => {
-            if (o.isMesh){//box size, location
-                makeInstanced(o.geometry,500,new THREE.Vector3(300,600,5000),new THREE.Vector3(-300,0,0),50)
-                makeInstanced(o.geometry,500,new THREE.Vector3(300,600,5000),new THREE.Vector3(300,0,0),50)
-                makeInstanced(o.geometry,500,new THREE.Vector3(300,400,5000),new THREE.Vector3(0,0,0),5)
-            } 
-          });
-    })
-}
+
 
 
 function loadTextures(){
@@ -81,24 +85,28 @@ function loadTextures(){
         snowBump= texture;
         console.log('snow bumploaded')
     })
+        textureLoader.load('../assets/checkeredTexture.png',function(texture){
+        checkeredTexture= texture;
+        console.log('check  loaded')
+    })
+    textureLoader.load('../assets/brick7/castle_brick_07_diff_1k.png',function(texture){
+        console.log('check  loaded')
+        brickTexture= texture;
+        brickTexture.repeat.set(0.1,0.1)
+    })
+    textureLoader.load('../assets/brick7/castle_brick_07_nor_1k.png',function(texture){
+        console.log('check  loaded')
+        brickNormal= texture;
+        brickNormal.repeat.set(0.1,0.1)
+    })
+    textureLoader.load('../assets/brick7/castle_brick_07_rough_1k.png',function(texture){
+        console.log('check  loaded')
+        brickRoughness = texture;
+        brickRoughness.repeat.set(0.1,0.1)
+    })
 }
-function makeInstanced( geometry,count,center,offset,s ) {
 
-    const matrix = new THREE.Matrix4();
-    const material = new THREE.MeshPhysicalMaterial({color:0x8c7012})
-    console.log(center)
-    const mesh = new THREE.InstancedMesh( geometry, material, count,s );
-
-    for ( let i = 0; i < count; i ++ ) {
-
-        randomizeMatrix( matrix,center,offset ,s);
-        mesh.setMatrixAt( i, matrix );
-
-    }
-
-    scene.add( mesh );
-}
-
+//for atmosspheric sound
 function setupAudio(){
     listener = new THREE.AudioListener();
     camera.add( listener );

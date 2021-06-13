@@ -1,0 +1,28 @@
+body {
+    width: 100vw;
+    height: 100vh;
+    margin: 0;
+    background: black;
+    overflow: hidden;
+  }
+  .message-large{
+
+    position: absolute;
+    left: 50%;
+    bottom: 50%;
+    text-align: center;
+    color: whitesmoke;
+    font-size: 3rem;
+    transform: translate(-50%, -50%)
+  }
+
+  .message-small{
+
+    position: absolute;
+    left: 50%;
+    bottom: 40%;
+    text-align: center;
+    color: whitesmoke;
+    font-size: 1rem;
+    transform: translate(-50%, -50%)
+  }

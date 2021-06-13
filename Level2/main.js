@@ -1,7 +1,7 @@
 
 document.addEventListener('keydown',levelInput)
 scene = new THREE.Scene();
-camera = new THREE.PerspectiveCamera( 85, window.innerWidth / window.innerHeight, 0.1, 1000 );
+camera = new THREE.PerspectiveCamera( 85, window.innerWidth / window.innerHeight, 0.1, 3000 );
 clock = new THREE.Clock();
 //minimap
 mapCamera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000  );        
@@ -114,13 +114,26 @@ function animate() {
 	//gameplay loop update
     for(let i=0; i<bullets.length; i++) {
         if(!bullets[i].update(player.position)) {
-            currentScene.remove(bullets[i].getMesh())
+            scene.remove(bullets[i].getMesh())
             bullets.splice(i, 1)
         }
     }
 	xWingBox.setFromObject(xWing.scene)
+	if(turretModel.scene.position.distanceTo(player.position)  < 500){
+		// let noisyPos = new THREE.Vector3().random().multiplyScalar(2,2,2).add(player.position)
+		turretModel.scene.lookAt(player.position)
+	}
+	else{
+		turretModel.scene.rotation.set(0, clock.getElapsedTime()*0.5,0)
+	}
 	firstcontrols.update(delta);
-
+	    for(let i=0; i<bullets.length; i++) {
+        	if(bullets[i].hitbox.intersectsBox(turretBox)){
+        		scene.remove(scene.getObjectByName('turret0'))
+        		scene.remove(bullets[i].getMesh())
+            	bullets.splice(i, 1)
+        	}
+    }
 	//updates html for player stats
 	updateUI()
 

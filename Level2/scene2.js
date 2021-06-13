@@ -37,7 +37,12 @@ window.addEventListener('mousedown', function(e) {
     })
 }
 function createTurret(){
-    turretModel.scene.scale.set(20,20,20)
+    turretModel.scene.scale.set(40,40,40);
+    turretModel.scene.name="turret0"
+    turretBox = new THREE.Box3()
+    turretBox.setFromObject(turretModel.scene)
+    let turretHelper = new THREE.Box3Helper(turretBox)
+    scene.add(turretHelper)
     scene.add(turretModel.scene);
 }
 function animateFlag(){
@@ -128,10 +133,8 @@ function createAtmosphericBoulders(){
     loader.load('../assets/Boulder/PUSHILIN_boulder.gltf',function ( gltf ) {
         gltf.scene.traverse((o) => {
             if (o.isMesh){//box size, location
-                makeInstancedWithCollision(o.geometry,500,new THREE.Vector3(300,600,5000),new THREE.Vector3(300,0,0),50,-5)
-                makeInstancedWithCollision(o.geometry,500,new THREE.Vector3(300,400,5000),new THREE.Vector3(0,0,0),15,0)
-                makeInstancedWithCollision(o.geometry,500,new THREE.Vector3(300,600,5000),new THREE.Vector3(-300,0,0),50,-5)
-                makeInstancedWithCollision(o.geometry,250,new THREE.Vector3(400,400,2000),new THREE.Vector3(0,0,+2000),100,-45)
+                makeInstancedWithCollision(o.geometry,500,new THREE.Vector3(500,600,5000),new THREE.Vector3(300,0,0),50,-5)
+                makeInstancedWithCollision(o.geometry,500,new THREE.Vector3(500,600,5000),new THREE.Vector3(-300,0,0),50,-5)
             } 
           });
     })
@@ -186,8 +189,9 @@ function loadTextures(){
 }
 
 function loadModels(){
-     loader.load('../assets/turret/SphereTurret.glb',function ( gltf ) {
-        console.log('turret loaded')
+     loader.load('../assets/turret/BlueSphereTurret.glb',function ( gltf ) {
+        console.log('turret loaded',gltf)
+        gltf.scene.name= "Turret"
         turretModel = gltf;
      })
 }

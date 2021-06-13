@@ -18,6 +18,7 @@ var xWing;
 var xWingBox;
 var bullets;
 var turretModel;
+var turretBox;
 //audio
 var listener; 
 var audioLoader;

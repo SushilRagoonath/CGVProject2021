@@ -12,7 +12,7 @@ var laser = function(initialPos,direction) {
     )
  
     this.mesh.position.copy(initialPos)
-    this.movementSpeed = 30;
+    this.movementSpeed = 1;
     this.getMesh = function() {
        return this.mesh
     }

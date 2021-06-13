@@ -34,6 +34,7 @@ const material = new THREE.MeshBasicMaterial( {color: 0x00ff00,envMap:stellarBac
 //loads in all relevant textures
 textureLoader = new THREE.TextureLoader()
 loadTextures() 
+loadModels()
 stellarBackground = new THREE.CubeTextureLoader()
 .setPath( '../assets/stardust/' )
 .load( [
@@ -45,8 +46,7 @@ stellarBackground = new THREE.CubeTextureLoader()
 	'negz.png'
 ] );
 
-//creates rings for scene and collision after delay so we have textures
-setTimeout(function(){ createRings() },200)
+
 scene.background = stellarBackground;
 scene.environment = stellarBackground;
 loadSpaceShip(function(){ //callback after loaded
@@ -62,7 +62,7 @@ loadSpaceShip(function(){ //callback after loaded
 
 	//sets up the controller for the player 
 	firstcontrols= new THREE.FirstPersonControls(player);
-	firstcontrols.lookSpeed = 0.1;
+	firstcontrols.lookSpeed = 0.05;
 	firstcontrols.movementSpeed = 10;
 
 })
@@ -71,29 +71,12 @@ camera.position.set( 0, 1,-0.5);
 hp = 50;
 timeLeft = 10;
 gamePaused=true;
-
+bullets = [];
 //creates all boulders in the scene
 createAtmosphericBoulders()
-
-//happens after 1s so that we have the textures loaded 
-//loads and adds the flag and its textures into the scene
-setTimeout(function(){
-flag = createFlag(stellarBackground,checkeredTexture);
-flag.position.set(0,0,3200)
-flagBox = new THREE.Box3();
-flagBox.setFromObject(flag);
-let flagBase = flag.getObjectByName("flagBase")
-flagBase.material.map = brickTexture
-flagBase.material.roughnessMap = brickRoughness
-flagBase.material.normalMap = brickNormal
-flagBase.material.metalness =0.1
-flagBase.material.roughness = 0.8
-// var flagHelper = new THREE.Box3Helper(flagBox,0xffff00);
-// scene.add(flagHelper)
-scene.add(flag)
-flag.scale.set(0.5,0.5,0.5)
-
-},1000)
+fireBullets()
+setTimeout(createTurret,1000)
+// createTurret()
 
 //sets background cube map
 scene.background = stellarBackground;
@@ -109,7 +92,7 @@ function animate() {
 	var delta = clock.getDelta();
 	//checks if game is in running state
 	if(!gamePaused){
-		firstcontrols.moveForward = true;
+		// firstcontrols.moveForward = true;
 		timeLeft -= delta;
 	}else{
 		firstcontrols.moveForward = false;
@@ -129,56 +112,24 @@ function animate() {
 	//end of mini map setup
 
 	//gameplay loop update
-	firstcontrols.update(delta);
+    for(let i=0; i<bullets.length; i++) {
+        if(!bullets[i].update(player.position)) {
+            currentScene.remove(bullets[i].getMesh())
+            bullets.splice(i, 1)
+        }
+    }
 	xWingBox.setFromObject(xWing.scene)
-	if(flagBox.intersectsBox(xWingBox)){
-		showGameWon()
-	}
-	let ringsToDelete=[]; //keeps track of collided rings
-	let ringBoxToDelete =-1;
-	//checks which rings collided so we can flag them for deletion
-	for (let index = 0; index <ringBoxes.length; index++) {
-		const box = ringBoxes[index];
-		if(box.intersectsBox(xWingBox)){
-			console.log('ring collision')
-			ringsToDelete.push("ring"+String(index) ) 
-			ringBoxToDelete = index	
-		}
-	}
-	//checks for rock collision
-	for (var i = 0; i < boulderBoxes.length; i++) {
-		if(boulderBoxes[i].intersectsBox(xWingBox)){
-			hp-=1;
-			console.log('collision with rock',hp)
-		}
-	}
-	setTimeout(function(){ 
-	//setTimeout for delaying deletion
-		for (let index = 0; index < ringsToDelete.length; index++) {
-			if(scene.getObjectByName(ringsToDelete[index])!==undefined){
-				// updates player stats if ring hit
-				ringsRemoved +=1;
-				timeLeft +=2.2
-				console.log(ringsRemoved)
-			}
-			//actually removing a ring from the scene
-			scene.remove(scene.getObjectByName(ringsToDelete[index]) )
-		}
-		
+	firstcontrols.update(delta);
 
-	},100)
-	//animation
-	animateFlag()
-	animateRings()
 	//updates html for player stats
 	updateUI()
 
 	//if game over
-	if(hp<0 ||timeLeft <0){
-		console.warn("game over")
-		showGameOver()
-		restartLevel()
-	}
+	// if(hp<0 ||timeLeft <0){
+	// 	console.warn("game over")
+	// 	showGameOver()
+	// 	restartLevel()
+	// }
 	//normal scene render
     renderer.render( scene, camera );
 

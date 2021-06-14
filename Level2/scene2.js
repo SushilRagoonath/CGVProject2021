@@ -52,6 +52,7 @@ function fireBulletsTurret(){
     // console.log(player)
     var directionToPlayer = new THREE.Vector3()
     turretModel.scene.getWorldDirection(directionToPlayer);
+    directionToPlayer = directionToPlayer.negate()
     // console.log(direction)
     // firstcontrols.getWorldDirection(direction)
     // shipPosition.sub(new THREE.Vector3(0, 25, 100))

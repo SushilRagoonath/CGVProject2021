@@ -71,6 +71,7 @@ camera.position.set( 0, 1,-0.5);
 hp = 50;
 timeLeft = 10;
 gamePaused=true;
+timeTillShot = 0.0
 bullets = [];
 turretBullets=[];
 //creates all boulders in the scene
@@ -127,7 +128,10 @@ function animate() {
 	if(turretModel.scene.position.distanceTo(player.position)  < 500){
 		// let noisyPos = new THREE.Vector3().random().multiplyScalar(2,2,2).add(player.position)
 		turretModel.scene.lookAt(player.position)
-		fireBulletsTurret()
+		if(clock.getElapsedTime() - timeTillShot > 0.75 ){
+			timeTillShot = clock.getElapsedTime()
+			fireBulletsTurret()
+		}
 	}
 	else{
 		turretModel.scene.rotation.set(0, clock.getElapsedTime()*0.5,0)

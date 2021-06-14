@@ -72,10 +72,13 @@ hp = 50;
 timeLeft = 10;
 gamePaused=true;
 bullets = [];
+turretBullets=[];
 //creates all boulders in the scene
 createAtmosphericBoulders()
 fireBullets()
 setTimeout(createTurret,1000)
+
+
 // createTurret()
 
 //sets background cube map
@@ -118,14 +121,32 @@ function animate() {
             bullets.splice(i, 1)
         }
     }
+
+	
 	xWingBox.setFromObject(xWing.scene)
 	if(turretModel.scene.position.distanceTo(player.position)  < 500){
 		// let noisyPos = new THREE.Vector3().random().multiplyScalar(2,2,2).add(player.position)
 		turretModel.scene.lookAt(player.position)
+		fireBulletsTurret()
 	}
 	else{
 		turretModel.scene.rotation.set(0, clock.getElapsedTime()*0.5,0)
 	}
+
+	for(let i=0; i<bullets.length; i++) {
+        if(!bullets[i].update(turretModel.scene.position)) {
+            scene.remove(bullets[i].getMesh())
+            bullets.splice(i, 1)
+        }
+    }
+
+	for(let i=0; i<turretBullets.length; i++) {
+        if(!turretBullets[i].update(turretModel.scene.position)) {
+            scene.remove(turretBullets[i].getMesh())
+            turretBullets.splice(i, 1)
+        }
+    }
+
 	firstcontrols.update(delta);
 	    for(let i=0; i<bullets.length; i++) {
         	if(bullets[i].hitbox.intersectsBox(turretBox)){
@@ -133,7 +154,16 @@ function animate() {
         		scene.remove(bullets[i].getMesh())
             	bullets.splice(i, 1)
         	}
-    }
+   		 }
+
+		for(let i=0; i<turretBullets.length; i++) {
+			if(turretBullets[i].hitbox.intersectsBox(xWingBox)){
+				// scene.remove(scene.getObjectByName('turret0'))
+				console.log("Hit")
+				scene.remove(turretBullets[i].getMesh())
+				turretBullets.splice(i, 1)
+			}
+			}
 	//updates html for player stats
 	updateUI()
 

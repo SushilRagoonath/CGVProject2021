@@ -1,40 +1,73 @@
 //spins our flag around the axis 
 function fireBullets(){
-    for(let i=0; i<bullets.length; i++) {
-        if(!bullets[i].update(player.position)) {
-            currentScene.remove(bullets[i].getMesh())
-            bullets.splice(i, 1)
+    // for(let i=0; i<bullets.length; i++) {
+    //     if(!bullets[i].update(player.position)) {
+    //         currentScene.remove(bullets[i].getMesh())//broken
+    //         bullets.splice(i, 1)
+    //     }
+    // }
+
+
+    window.addEventListener('mousedown', function(e) {
+        console.log(e)     
+        switch(e.button) {
+        case 0: // Left mouse click
+            
+            var shipPosition = player.position.clone()
+            // console.log(player)
+            var direction = new THREE.Vector3()
+            player.getWorldDirection(direction);
+            // console.log(direction)
+            // firstcontrols.getWorldDirection(direction)
+            // shipPosition.sub(new THREE.Vector3(0, 25, 100))
+            
+            //  var matrix = new THREE.Matrix4();
+            // matrix.extractRotation( cube.matrix );
+
+            // console.log(matrix.extractRotation( cube.matrix ));
+            // var direction = new THREE.Vector3( 0, 0, 1 );
+            // matrix.multiplyVector3( direction );
+
+            var bullet = new laser(shipPosition,direction)//cube.get
+            bullets.push(bullet)
+            scene.add(bullet.getMesh())
+            scene.add(bullet.hitboxHelper)
+        break
         }
-    }
+        })
+}
+
+function fireBulletsTurret(){
+    // for(let i=0; i<bullets.length; i++) {
+    //     if(!bullets[i].update(turretModel.scene.position)) {
+    //         currentScene.remove(bullets[i].getMesh())//broken
+    //         bullets.splice(i, 1)
+    //     }
+    // }
 
 
-window.addEventListener('mousedown', function(e) {
-    console.log(e)     
-    switch(e.button) {
-       case 0: // Space
-         
-         var shipPosition = player.position.clone()
-         // console.log(player)
-         var direction = new THREE.Vector3()
-         player.getWorldDirection(direction);
-         console.log(direction)
-         // firstcontrols.getWorldDirection(direction)
-         // shipPosition.sub(new THREE.Vector3(0, 25, 100))
-        
-        //  var matrix = new THREE.Matrix4();
-        // matrix.extractRotation( cube.matrix );
 
-        // console.log(matrix.extractRotation( cube.matrix ));
-        // var direction = new THREE.Vector3( 0, 0, 1 );
-        // matrix.multiplyVector3( direction );
+            
+    var turretPosition = turretModel.scene.position.clone()
+    // console.log(player)
+    var directionToPlayer = new THREE.Vector3()
+    turretModel.scene.getWorldDirection(directionToPlayer);
+    // console.log(direction)
+    // firstcontrols.getWorldDirection(direction)
+    // shipPosition.sub(new THREE.Vector3(0, 25, 100))
+    
+    //  var matrix = new THREE.Matrix4();
+    // matrix.extractRotation( cube.matrix );
 
-         var bullet = new laser(shipPosition,direction)//cube.get
-         bullets.push(bullet)
-         scene.add(bullet.getMesh())
-         scene.add(bullet.hitboxHelper)
-       break
-    }
-    })
+    // console.log(matrix.extractRotation( cube.matrix ));
+    // var direction = new THREE.Vector3( 0, 0, 1 );
+    // matrix.multiplyVector3( direction );
+
+    var bullet = new laser(turretPosition,directionToPlayer)//cube.get
+    turretBullets.push(bullet)
+    scene.add(bullet.getMesh())
+    scene.add(bullet.hitboxHelper)
+
 }
 function createTurret(){
     turretModel.scene.scale.set(40,40,40);

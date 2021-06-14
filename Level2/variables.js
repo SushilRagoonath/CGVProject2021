@@ -17,6 +17,7 @@ var points;
 var xWing;
 var xWingBox;
 var bullets;
+var turretBullets;
 var turretModel;
 var turretBox;
 //audio

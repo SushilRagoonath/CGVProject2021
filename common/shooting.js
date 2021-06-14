@@ -37,3 +37,5 @@ var laser = function(initialPos,direction) {
  
     return this
  }
+
+ 

@@ -47,6 +47,7 @@ stellarBackground = new THREE.CubeTextureLoader()
 
 //creates rings for scene and collision after delay so we have textures
 setTimeout(function(){ createRings() },200)
+setTimeout(function(){ createHealthBoxes() },400)
 scene.background = stellarBackground;
 scene.environment = stellarBackground;
 loadSpaceShip(function(){ //callback after loaded
@@ -62,7 +63,7 @@ loadSpaceShip(function(){ //callback after loaded
 
 	//sets up the controller for the player 
 	firstcontrols= new THREE.FirstPersonControls(player);
-	firstcontrols.lookSpeed = 0.1;
+	firstcontrols.lookSpeed = 0.05;
 	firstcontrols.movementSpeed = 10;
 
 })
@@ -145,6 +146,21 @@ function animate() {
 			ringBoxToDelete = index	
 		}
 	}
+
+	let healthToDelete=[]; //keeps track of collided health
+	let healthBoxToDelete =-1;
+	//checks which health collided so we can flag them for deletion
+	for (let index = 0; index <healthBoxes.length; index++) {
+		const box = healthBoxes[index];
+		if(box.intersectsBox(xWingBox)){
+			console.log('health collision')
+			healthToDelete.push("health"+String(index) ) 
+			healthBoxToDelete = index	
+		}
+	}
+
+
+
 	//checks for rock collision
 	for (var i = 0; i < boulderBoxes.length; i++) {
 		if(boulderBoxes[i].intersectsBox(xWingBox)){
@@ -152,7 +168,7 @@ function animate() {
 			console.log('collision with rock',hp)
 		}
 	}
-	setTimeout(function(){ 
+	setTimeout(function(){
 	//setTimeout for delaying deletion
 		for (let index = 0; index < ringsToDelete.length; index++) {
 			if(scene.getObjectByName(ringsToDelete[index])!==undefined){
@@ -167,9 +183,26 @@ function animate() {
 		
 
 	},100)
+
+	setTimeout(function(){ 
+		//setTimeout for delaying deletion for health
+			for (let index = 0; index < healthToDelete.length; index++) {
+				if(scene.getObjectByName(healthToDelete[index])!==undefined){
+					// updates player stats if health hit
+					hp =50;
+					console.log('picked up health',hp)
+				}
+				//actually removing a health box from the scene
+				scene.remove(scene.getObjectByName(healthToDelete[index]) )
+			}
+			
+	
+		},100)
 	//animation
 	animateFlag()
 	animateRings()
+	animateHealth()
+
 	//updates html for player stats
 	updateUI()
 

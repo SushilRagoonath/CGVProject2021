@@ -20,12 +20,14 @@ const ringNumber = 30; //amount of rings
 var rings;
 var ringBoxes;
 var ringsRemoved;
+const healthNumber = 6; //amount of health  
+var health;
+var healthBoxes;
 var instancedCollisionBoulder;
 var boulderBoxes;
 var composer;
 var flag;
 var flagBox;
-
 //audio
 var listener; 
 var audioLoader;

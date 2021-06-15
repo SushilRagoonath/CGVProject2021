@@ -14,6 +14,17 @@ function animateRings() {
     
 }
 
+function animateHealth() {
+    for (var i = 0; i < healthNumber; i++) {
+        let object = scene.getObjectByName("health"+String(i))
+        if(object===undefined){
+            continue
+        }
+        object.rotation.set(2*clock.getElapsedTime()+i , 2*clock.getElapsedTime()+i  , 0)
+    }
+    
+}
+
 //handles input for level related function
 function levelInput(e){
     var node = document.getElementById("tutorial-info1")
@@ -39,6 +50,8 @@ function restartLevel(){
     gamePaused = true;
     destroyRings()
     createRings()
+    removeHealth()
+    createHealthBoxes()
     sound.stop()
     sound.play()
 
@@ -51,6 +64,16 @@ function destroyRings(){
     delete ringBoxes;
     ringBoxes = [];
 }
+
+// destroys boxes for health and health from scene
+function removeHealth(){
+    for (let index = 0; index < healthNumber; index++) {
+        scene.remove(scene.getObjectByName("health"+String(index)) )
+    }
+delete healthBoxes;
+healthBoxes = [];
+}
+
 //html message showing game failure
 function showGameOver(){
     let go =document.getElementById("game-over");
@@ -144,6 +167,37 @@ function createRings(){
     }
 
 }
+
+function createHealthBoxes(){
+    health =[];
+    healthBoxes=[];
+        
+    for (let index = 0; index < healthNumber; index++) {
+        let x = 70 * Math.random() 
+        let z = 30* Math.random()  + 450 *(index+1) 
+        let y = 5 * Math.random()
+        healthBox = createHealthObj(stellarBackground);
+        healthBox.scale.set(5,5,5)
+        healthBox.castShadow = true;
+        healthBox.receiveShadow = true;
+        //sets name so we can easilty delete later
+        healthBox.name="health" +String(index) 
+        healthBox.position.z = z
+        healthBox.position.y = y
+        healthBox.position.x = x
+        health.push(healthBox)
+        //creates hitbox for each healthbox
+        let box = new THREE.Box3().setFromObject(healthBox)
+        healthBoxes.push(box)
+
+        scene.add(healthBox)
+        //const helper = new THREE.Box3Helper( box, 0xffff00 );
+        //helper.name = "helper" +String(index)
+        //scene.add(helper)
+    }
+
+}
+
 function loadTextures(){
     textureLoader.load('../assets/snow3/snow_03_rough_1k.png',function(texture){
         snowRoughness = texture;

@@ -37,7 +37,7 @@ function fireBullets(){
         })
 }
 
-function fireBulletsTurret(){
+function fireBulletsTurret(index){
     // for(let i=0; i<bullets.length; i++) {
     //     if(!bullets[i].update(turretModel.scene.position)) {
     //         currentScene.remove(bullets[i].getMesh())//broken
@@ -48,7 +48,7 @@ function fireBulletsTurret(){
 
 
             
-    var turretPosition = turretModel.scene.position.clone()
+    var turretPosition = scene.getObjectByName("turret"+String(index)).position.clone()
     // console.log(player)
     var directionToPlayer = new THREE.Vector3()
     turretModel.scene.getWorldDirection(directionToPlayer);
@@ -75,10 +75,28 @@ function createTurret(){
     turretModel.scene.name="turret0"
     turretBox = new THREE.Box3()
     turretBox.setFromObject(turretModel.scene)
+    turretModels.push(turretModel)
+    turretBoxes.push(turretBox)
     let turretHelper = new THREE.Box3Helper(turretBox)
     scene.add(turretHelper)
     scene.add(turretModel.scene);
 }
+
+function animateTurret(index){
+		
+    if(scene.getObjectByName("turret"+String(index)).position.distanceTo(player.position)  < 500){
+        // let noisyPos = new THREE.Vector3().random().multiplyScalar(2,2,2).add(player.position)
+        turretModel.scene.lookAt(player.position)
+        if(clock.getElapsedTime() - timeTillShot > 0.75 ){
+            timeTillShot = clock.getElapsedTime()
+            fireBulletsTurret(index)
+        }
+    }
+    else{
+        turretModel.scene.rotation.set(0, clock.getElapsedTime()*0.5,0)
+    }
+}
+
 function animateFlag(){
     flag.rotation.set(0, 2*clock.getElapsedTime()  , 0.2 *Math.sin(clock.getElapsedTime() * 0.1))
 }

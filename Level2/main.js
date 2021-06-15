@@ -74,6 +74,9 @@ gamePaused=true;
 timeTillShot = 0.0
 bullets = [];
 turretBullets=[];
+turretModels=[];
+turretBoxes=[]
+turretsRemoved=[]
 //creates all boulders in the scene
 createAtmosphericBoulders()
 fireBullets()
@@ -123,18 +126,12 @@ function animate() {
         }
     }
 
-	
 	xWingBox.setFromObject(xWing.scene)
-	if(turretModel.scene.position.distanceTo(player.position)  < 500){
-		// let noisyPos = new THREE.Vector3().random().multiplyScalar(2,2,2).add(player.position)
-		turretModel.scene.lookAt(player.position)
-		if(clock.getElapsedTime() - timeTillShot > 0.75 ){
-			timeTillShot = clock.getElapsedTime()
-			fireBulletsTurret()
+	
+	if(turretModels.length!=0){
+		for(let i=0;i<turretModels.length;i++){
+			animateTurret(i)
 		}
-	}
-	else{
-		turretModel.scene.rotation.set(0, clock.getElapsedTime()*0.5,0)
 	}
 
 	for(let i=0; i<bullets.length; i++) {
@@ -153,11 +150,17 @@ function animate() {
 
 	firstcontrols.update(delta);
 	    for(let i=0; i<bullets.length; i++) {
-        	if(bullets[i].hitbox.intersectsBox(turretBox)){
-        		scene.remove(scene.getObjectByName('turret0'))
-        		scene.remove(bullets[i].getMesh())
-            	bullets.splice(i, 1)
-        	}
+			for(let j=0;j<turretBoxes.length;j++){
+				if(bullets[i].hitbox.intersectsBox(turretBoxes[j])){
+					scene.remove(scene.getObjectByName("turret"+String(j)))//logical error here when they shoot the turrets in a different order than they appear
+					scene.remove(bullets[i].getMesh())
+
+					turretModels.splice(j, 1)
+					turretBoxes.splice(j, 1)
+					bullets.splice(i, 1)
+				}
+			}
+        	
    		 }
 
 		for(let i=0; i<turretBullets.length; i++) {

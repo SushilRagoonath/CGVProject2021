@@ -16,11 +16,14 @@ var points;
 //gameplay models
 var xWing;
 var xWingBox;
+//turret models
+var turretModels;
+var turretBoxes;
+var turretsRemoved;
+//Turret shooting
 var bullets;
 var timeTillShot;
 var turretBullets;
-var turretModel;
-var turretBox;
 //audio
 var listener; 
 var audioLoader;

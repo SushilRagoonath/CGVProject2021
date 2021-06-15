@@ -17,13 +17,15 @@ var points;
 var xWing;
 var xWingBox;
 //turret models
-var turretModels;
-var turretBoxes;
-var turretsRemoved;
+var turretModel;
+var turretBox;
 //Turret shooting
 var bullets;
 var timeTillShot;
 var turretBullets;
+var turretHp;
+//number of rings
+const ringNumber = 30; 
 //audio
 var listener; 
 var audioLoader;

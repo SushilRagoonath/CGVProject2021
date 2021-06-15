@@ -46,7 +46,8 @@ stellarBackground = new THREE.CubeTextureLoader()
 	'negz.png'
 ] );
 
-
+//creates rings for scene and collision after delay so we have textures
+setTimeout(function(){ createRings() },200)
 scene.background = stellarBackground;
 scene.environment = stellarBackground;
 loadSpaceShip(function(){ //callback after loaded
@@ -74,9 +75,6 @@ gamePaused=true;
 timeTillShot = 0.0
 bullets = [];
 turretBullets=[];
-turretModels=[];
-turretBoxes=[]
-turretsRemoved=[]
 //creates all boulders in the scene
 createAtmosphericBoulders()
 fireBullets()
@@ -118,6 +116,36 @@ function animate() {
 	mapCamera.rotation.z = Math.PI
 	//end of mini map setup
 
+	//ring collisions
+	let ringsToDelete=[]; //keeps track of collided rings
+	let ringBoxToDelete =-1;
+	//checks which rings collided so we can flag them for deletion
+	for (let index = 0; index <ringBoxes.length; index++) {
+		const box = ringBoxes[index];
+		if(box.intersectsBox(xWingBox)){
+			console.log('ring collision')
+			ringsToDelete.push("ring"+String(index) ) 
+			ringBoxToDelete = index	
+		}
+	}
+
+	//deletion of rings following a collision with the ship
+	setTimeout(function(){ 
+		//setTimeout for delaying deletion
+			for (let index = 0; index < ringsToDelete.length; index++) {
+				if(scene.getObjectByName(ringsToDelete[index])!==undefined){
+					// updates player stats if ring hit
+					ringsRemoved +=1;
+					timeLeft +=2.2
+					console.log(ringsRemoved)
+				}
+				//actually removing a ring from the scene
+				scene.remove(scene.getObjectByName(ringsToDelete[index]) )
+			}
+			
+	
+		},100)
+
 	//gameplay loop update
     for(let i=0; i<bullets.length; i++) {
         if(!bullets[i].update(player.position)) {
@@ -128,49 +156,43 @@ function animate() {
 
 	xWingBox.setFromObject(xWing.scene)
 	
-	if(turretModels.length!=0){
-		for(let i=0;i<turretModels.length;i++){
-			animateTurret(i)
-		}
-	}
+	animateTurret()
 
 	for(let i=0; i<bullets.length; i++) {
-        if(!bullets[i].update(turretModel.scene.position)) {
+        if(!bullets[i].update(turretModel.scene.position)) {//broken
             scene.remove(bullets[i].getMesh())
             bullets.splice(i, 1)
         }
     }
 
 	for(let i=0; i<turretBullets.length; i++) {
-        if(!turretBullets[i].update(turretModel.scene.position)) {
+        if(!turretBullets[i].update(turretModel.scene.position)) {//broken
             scene.remove(turretBullets[i].getMesh())
             turretBullets.splice(i, 1)
         }
     }
 
 	firstcontrols.update(delta);
-	    for(let i=0; i<bullets.length; i++) {
-			for(let j=0;j<turretBoxes.length;j++){
-				if(bullets[i].hitbox.intersectsBox(turretBoxes[j])){
-					scene.remove(scene.getObjectByName("turret"+String(j)))//logical error here when they shoot the turrets in a different order than they appear
-					scene.remove(bullets[i].getMesh())
+	for(let i=0; i<bullets.length; i++) {
+		
+		if(bullets[i].hitbox.intersectsBox(turretBox)){
+			scene.remove(turretModel)
+			scene.remove(turretBox)
+			scene.remove(bullets[i].getMesh())
 
-					turretModels.splice(j, 1)
-					turretBoxes.splice(j, 1)
-					bullets.splice(i, 1)
-				}
-			}
-        	
-   		 }
+			bullets.splice(i, 1)
+		}
+		
+	}
 
-		for(let i=0; i<turretBullets.length; i++) {
-			if(turretBullets[i].hitbox.intersectsBox(xWingBox)){
-				// scene.remove(scene.getObjectByName('turret0'))
-				console.log("Hit")
-				scene.remove(turretBullets[i].getMesh())
-				turretBullets.splice(i, 1)
-			}
-			}
+	for(let i=0; i<turretBullets.length; i++) {
+		if(turretBullets[i].hitbox.intersectsBox(xWingBox)){
+			// scene.remove(scene.getObjectByName('turret0'))
+			hp-=5;
+			scene.remove(turretBullets[i].getMesh())
+			turretBullets.splice(i, 1)
+		}
+	}
 	//updates html for player stats
 	updateUI()
 

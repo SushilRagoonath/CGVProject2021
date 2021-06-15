@@ -48,7 +48,7 @@ function fireBulletsTurret(index){
 
 
             
-    var turretPosition = scene.getObjectByName("turret"+String(index)).position.clone()
+    var turretPosition =turretModel.scene.position.clone()
     // console.log(player)
     var directionToPlayer = new THREE.Vector3()
     turretModel.scene.getWorldDirection(directionToPlayer);
@@ -72,28 +72,67 @@ function fireBulletsTurret(index){
 }
 function createTurret(){
     turretModel.scene.scale.set(40,40,40);
-    turretModel.scene.name="turret0"
+    turretModel.scene.name="turret"
     turretBox = new THREE.Box3()
     turretBox.setFromObject(turretModel.scene)
-    turretModels.push(turretModel)
-    turretBoxes.push(turretBox)
     let turretHelper = new THREE.Box3Helper(turretBox)
     scene.add(turretHelper)
     scene.add(turretModel.scene);
 }
 
+function createRings(){
+    rings =[];
+    ringBoxes=[];
+    ringsRemoved =0;
+    const geometry = new THREE.TorusGeometry( 10, 3, 16, 100 );
+    console.log('before ring',snowRoughness)
+    const rock2 = new THREE.MeshPhysicalMaterial(
+     { color: 0x943e00,reflectivity:0.6,envMap:stellarBackground,roughness:0.7,metalness:0.2,roughnessMap:snowRoughness,normalMap:snowNormal,emissive:0x212121} 
+        );
+    for (let index = 0; index < ringNumber; index++) {
+        let x = 70 * Math.random() 
+        let z = 30* Math.random()  +85 *(index+1) 
+        let y = 5 * Math.random()
+        torus = new THREE.Mesh( geometry, rock2 );
+        torus.castShadow = true;
+        torus.receiveShadow = true;
+        //sets name so we can easilty delete later
+        torus.name="ring" +String(index) 
+        torus.position.z = z
+        torus.position.y = y
+        torus.position.x = x
+        rings.push(torus)
+        //creates hitbox for each ring
+        let box = new THREE.Box3().setFromObject(torus)
+        ringBoxes.push(box)
+
+        scene.add(torus)
+        // const helper = new THREE.Box3Helper( box, 0xffff00 );
+        // helper.name = "helper" +String(index)
+        // scene.add(helper)
+    }
+
+}
+
 function animateTurret(index){
 		
-    if(scene.getObjectByName("turret"+String(index)).position.distanceTo(player.position)  < 500){
+    if(turretModel.scene.position.distanceTo(player.position) < 500){
         // let noisyPos = new THREE.Vector3().random().multiplyScalar(2,2,2).add(player.position)
         turretModel.scene.lookAt(player.position)
-        if(clock.getElapsedTime() - timeTillShot > 0.75 ){
+        if(clock.getElapsedTime() - timeTillShot > 0.5 ){
             timeTillShot = clock.getElapsedTime()
             fireBulletsTurret(index)
         }
     }
     else{
-        turretModel.scene.rotation.set(0, clock.getElapsedTime()*0.5,0)
+        
+        // console.log(playerPos.sub(turretPos))
+        // turretModel.postion
+        turretModel.scene.position.x+=0.01*(player.position.x-turretModel.scene.position.x)
+        turretModel.scene.position.y+=0.01*(player.position.y-turretModel.scene.position.y)
+        turretModel.scene.position.z+=0.01*(player.position.z-turretModel.scene.position.z)
+
+        // turretModel.scene.rotation.set(0, clock.getElapsedTime()*0.5,0)
     }
 }
 

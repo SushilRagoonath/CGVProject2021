@@ -268,7 +268,7 @@
 					}
 
 					lon -= this.mouseX * actualLookSpeed;
-					if ( this.lookVertical ) lat -= this.mouseY * actualLookSpeed * verticalLookRatio;
+					if ( this.lookVertical ) lat += this.mouseY * actualLookSpeed * verticalLookRatio;
 					lat = Math.max( - 85, Math.min( 85, lat ) );
 					let phi = THREE.MathUtils.degToRad( 90 - lat );
 					const theta = THREE.MathUtils.degToRad( lon );

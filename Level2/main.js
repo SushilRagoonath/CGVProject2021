@@ -46,7 +46,8 @@ stellarBackground = new THREE.CubeTextureLoader()
 	'negz.png'
 ] );
 
-
+//creates rings for scene and collision after delay so we have textures
+setTimeout(function(){ createRings() },200)
 scene.background = stellarBackground;
 scene.environment = stellarBackground;
 loadSpaceShip(function(){ //callback after loaded
@@ -71,11 +72,15 @@ camera.position.set( 0, 1,-0.5);
 hp = 50;
 timeLeft = 10;
 gamePaused=true;
+timeTillShot = 0.0
 bullets = [];
+turretBullets=[];
 //creates all boulders in the scene
 createAtmosphericBoulders()
 fireBullets()
 setTimeout(createTurret,1000)
+
+
 // createTurret()
 
 //sets background cube map
@@ -111,6 +116,36 @@ function animate() {
 	mapCamera.rotation.z = Math.PI
 	//end of mini map setup
 
+	//ring collisions
+	let ringsToDelete=[]; //keeps track of collided rings
+	let ringBoxToDelete =-1;
+	//checks which rings collided so we can flag them for deletion
+	for (let index = 0; index <ringBoxes.length; index++) {
+		const box = ringBoxes[index];
+		if(box.intersectsBox(xWingBox)){
+			console.log('ring collision')
+			ringsToDelete.push("ring"+String(index) ) 
+			ringBoxToDelete = index	
+		}
+	}
+
+	//deletion of rings following a collision with the ship
+	setTimeout(function(){ 
+		//setTimeout for delaying deletion
+			for (let index = 0; index < ringsToDelete.length; index++) {
+				if(scene.getObjectByName(ringsToDelete[index])!==undefined){
+					// updates player stats if ring hit
+					ringsRemoved +=1;
+					timeLeft +=2.2
+					console.log(ringsRemoved)
+				}
+				//actually removing a ring from the scene
+				scene.remove(scene.getObjectByName(ringsToDelete[index]) )
+			}
+			
+	
+		},100)
+
 	//gameplay loop update
     for(let i=0; i<bullets.length; i++) {
         if(!bullets[i].update(player.position)) {
@@ -118,22 +153,46 @@ function animate() {
             bullets.splice(i, 1)
         }
     }
+
 	xWingBox.setFromObject(xWing.scene)
-	if(turretModel.scene.position.distanceTo(player.position)  < 500){
-		// let noisyPos = new THREE.Vector3().random().multiplyScalar(2,2,2).add(player.position)
-		turretModel.scene.lookAt(player.position)
-	}
-	else{
-		turretModel.scene.rotation.set(0, clock.getElapsedTime()*0.5,0)
-	}
-	firstcontrols.update(delta);
-	    for(let i=0; i<bullets.length; i++) {
-        	if(bullets[i].hitbox.intersectsBox(turretBox)){
-        		scene.remove(scene.getObjectByName('turret0'))
-        		scene.remove(bullets[i].getMesh())
-            	bullets.splice(i, 1)
-        	}
+	
+	animateTurret()
+
+	for(let i=0; i<bullets.length; i++) {
+        if(!bullets[i].update(turretModel.scene.position)) {//broken
+            scene.remove(bullets[i].getMesh())
+            bullets.splice(i, 1)
+        }
     }
+
+	for(let i=0; i<turretBullets.length; i++) {
+        if(!turretBullets[i].update(turretModel.scene.position)) {//broken
+            scene.remove(turretBullets[i].getMesh())
+            turretBullets.splice(i, 1)
+        }
+    }
+
+	firstcontrols.update(delta);
+	for(let i=0; i<bullets.length; i++) {
+		
+		if(bullets[i].hitbox.intersectsBox(turretBox)){
+			scene.remove(turretModel)
+			scene.remove(turretBox)
+			scene.remove(bullets[i].getMesh())
+
+			bullets.splice(i, 1)
+		}
+		
+	}
+
+	for(let i=0; i<turretBullets.length; i++) {
+		if(turretBullets[i].hitbox.intersectsBox(xWingBox)){
+			// scene.remove(scene.getObjectByName('turret0'))
+			hp-=5;
+			scene.remove(turretBullets[i].getMesh())
+			turretBullets.splice(i, 1)
+		}
+	}
 	//updates html for player stats
 	updateUI()
 

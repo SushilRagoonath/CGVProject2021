@@ -80,6 +80,23 @@ createAtmosphericBoulders()
 fireBullets()
 setTimeout(createTurret,1000)
 
+setTimeout(function(){
+	flag = createFlag(stellarBackground,checkeredTexture);
+	flag.position.set(0,0,2800)
+	flagBox = new THREE.Box3();
+	flagBox.setFromObject(flag);
+	let flagBase = flag.getObjectByName("flagBase")
+	flagBase.material.map = brickTexture
+	flagBase.material.roughnessMap = brickRoughness
+	flagBase.material.normalMap = brickNormal
+	flagBase.material.metalness =0.1
+	flagBase.material.roughness = 0.8
+	// var flagHelper = new THREE.Box3Helper(flagBox,0xffff00);
+	// scene.add(flagHelper)
+	scene.add(flag)
+	flag.scale.set(0.5,0.5,0.5)
+	
+	},1000)
 
 // createTurret()
 
@@ -155,7 +172,11 @@ function animate() {
     }
 
 	xWingBox.setFromObject(xWing.scene)
+	if(flagBox.intersectsBox(xWingBox)){
+		showGameWon()
+	}
 	
+	animateFlag()
 	animateTurret()
 
 	for(let i=0; i<bullets.length; i++) {
@@ -196,12 +217,11 @@ function animate() {
 	//updates html for player stats
 	updateUI()
 
-	//if game over
-	// if(hp<0 ||timeLeft <0){
-	// 	console.warn("game over")
-	// 	showGameOver()
-	// 	restartLevel()
-	// }
+	if(hp<1 ||timeLeft <1){
+		console.warn("game over")
+		showGameOver()
+		restartLevel()
+	}
 	//normal scene render
     renderer.render( scene, camera );
 

@@ -72,6 +72,7 @@ function fireBulletsTurret(index){
 }
 function createTurret(){
     turretModel.scene.scale.set(40,40,40);
+    turretModel.scene.position.set(0,100,1000)
     turretModel.scene.name="turret"
     turretBox = new THREE.Box3()
     turretBox.setFromObject(turretModel.scene)
@@ -110,8 +111,15 @@ function createRings(){
         // const helper = new THREE.Box3Helper( box, 0xffff00 );
         // helper.name = "helper" +String(index)
         // scene.add(helper)
+    }  
+}
+// destroys boxes for rings and rings from scene
+function destroyRings(){
+    for (let index = 0; index < ringNumber; index++) {
+        scene.remove(scene.getObjectByName("ring"+String(index)) )
     }
-
+delete ringBoxes;
+ringBoxes = [];
 }
 
 function animateTurret(index){
@@ -131,6 +139,8 @@ function animateTurret(index){
         turretModel.scene.position.x+=0.01*(player.position.x-turretModel.scene.position.x)
         turretModel.scene.position.y+=0.01*(player.position.y-turretModel.scene.position.y)
         turretModel.scene.position.z+=0.01*(player.position.z-turretModel.scene.position.z)
+
+        turretBox.setFromObject(turretModel.scene)
 
         // turretModel.scene.rotation.set(0, clock.getElapsedTime()*0.5,0)
     }
@@ -169,6 +179,7 @@ function levelInput(e){
 }
 //resets entire level
 function restartLevel(){
+    turretModel.scene.position.set(0,100,1500)
     player.position.set(0,0,0)
     player.rotation.set(0,0,0)
     timeLeft = 10;
@@ -192,10 +203,10 @@ function showGameOver(){
 //html message that shows when you finish the level
 function showGameWon(){
     let go =document.getElementById("game-over");
-    go.innerHTML= "You Won! achieved " +String(ringsRemoved)+'/' +String(ringNumber) +" boxes" 
+    go.innerHTML= "You beat level 2! achieved " +String(ringsRemoved)+'/' +String(ringNumber) +" boxes" 
     setTimeout(function(){
         go.innerHTML=""
-        window.location.href='../MainMenu'// routes back to menu after 5 seconds
+        window.location.href='../Level3'// routes back to menu after 5 seconds
     },5000)
     player.position.set(0,0,0)
 }

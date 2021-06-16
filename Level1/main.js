@@ -189,7 +189,7 @@ function animate() {
 			for (let index = 0; index < healthToDelete.length; index++) {
 				if(scene.getObjectByName(healthToDelete[index])!==undefined){
 					// updates player stats if health hit
-					hp =50;
+					hp +=10;
 					console.log('picked up health',hp)
 				}
 				//actually removing a health box from the scene

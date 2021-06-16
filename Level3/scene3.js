@@ -1,0 +1,369 @@
+//spins our flag around the axis 
+function fireBullets(){
+    // for(let i=0; i<bullets.length; i++) {
+    //     if(!bullets[i].update(player.position)) {
+    //         currentScene.remove(bullets[i].getMesh())//broken
+    //         bullets.splice(i, 1)
+    //     }
+    // }
+
+
+    window.addEventListener('mousedown', function(e) {
+        console.log(e)     
+        switch(e.button) {
+        case 0: // Left mouse click
+            
+            var shipPosition = player.position.clone()
+            // console.log(player)
+            var direction = new THREE.Vector3()
+            player.getWorldDirection(direction);
+            // console.log(direction)
+            // firstcontrols.getWorldDirection(direction)
+            // shipPosition.sub(new THREE.Vector3(0, 25, 100))
+            
+            //  var matrix = new THREE.Matrix4();
+            // matrix.extractRotation( cube.matrix );
+
+            // console.log(matrix.extractRotation( cube.matrix ));
+            // var direction = new THREE.Vector3( 0, 0, 1 );
+            // matrix.multiplyVector3( direction );
+
+            var bullet = new laser(shipPosition,direction)//cube.get
+            bullets.push(bullet)
+            scene.add(bullet.getMesh())
+            scene.add(bullet.hitboxHelper)
+        break
+        }
+        })
+}
+
+function fireBulletsTurret(index){
+    
+    var turretPosition =turretModel.scene.position.clone()
+    var turretPosition1=turretModel1.scene.position.clone()
+    var directionToPlayer = new THREE.Vector3()
+    var directionToPlayer1 = new THREE.Vector3()
+    turretModel.scene.getWorldDirection(directionToPlayer);
+    turretModel1.scene.getWorldDirection(directionToPlayer1);
+    directionToPlayer = directionToPlayer.negate()
+    directionToPlayer1 = directionToPlayer1.negate()
+    var bullet = new laser(turretPosition,directionToPlayer)//cube.get
+    var bullet1 = new laser(turretPosition1,directionToPlayer1)
+    turretBullets.push(bullet)
+    turretBullets.push(bullet1)
+    scene.add(bullet.getMesh())
+    scene.add(bullet.hitboxHelper)
+    scene.add(bullet1.getMesh())
+    scene.add(bullet1.hitboxHelper)
+
+}
+function createTurret(){
+
+    turretModel.scene.scale.set(40,40,40);
+    turretModel.scene.position.set(-200,150,1000)
+    turretModel.scene.name="turret"
+    turretBox = new THREE.Box3()
+    turretBox.setFromObject(turretModel.scene)
+    let turretHelper = new THREE.Box3Helper(turretBox)
+    scene.add(turretHelper)
+    scene.add(turretModel.scene);
+
+    turretModel1.scene.scale.set(40,40,40);
+    turretModel1.scene.position.set(200,200,1000)
+    turretModel1.scene.name="turret"
+    turretBox1 = new THREE.Box3()
+    turretBox1.setFromObject(turretModel1.scene)
+    let turretHelper1 = new THREE.Box3Helper(turretBox1)
+    scene.add(turretHelper1)
+    scene.add(turretModel1.scene);
+}
+
+function createRings(){
+    rings =[];
+    ringBoxes=[];
+    ringsRemoved =0;
+    const geometry = new THREE.TorusGeometry( 10, 3, 16, 100 );
+    console.log('before ring',snowRoughness)
+    const rock2 = new THREE.MeshPhysicalMaterial(
+     { color: 0x943e00,reflectivity:0.6,envMap:stellarBackground,roughness:0.7,metalness:0.2,roughnessMap:snowRoughness,normalMap:snowNormal,emissive:0x212121} 
+        );
+    for (let index = 0; index < ringNumber; index++) {
+        let x = 70 * Math.random() 
+        let z = 30* Math.random()  +85 *(index+1) 
+        let y = 5 * Math.random()
+        torus = new THREE.Mesh( geometry, rock2 );
+        torus.castShadow = true;
+        torus.receiveShadow = true;
+        //sets name so we can easilty delete later
+        torus.name="ring" +String(index) 
+        torus.position.z = z
+        torus.position.y = y
+        torus.position.x = x
+        rings.push(torus)
+        //creates hitbox for each ring
+        let box = new THREE.Box3().setFromObject(torus)
+        ringBoxes.push(box)
+
+        scene.add(torus)
+        // const helper = new THREE.Box3Helper( box, 0xffff00 );
+        // helper.name = "helper" +String(index)
+        // scene.add(helper)
+    }  
+}
+// destroys boxes for rings and rings from scene
+function destroyRings(){
+    for (let index = 0; index < ringNumber; index++) {
+        scene.remove(scene.getObjectByName("ring"+String(index)) )
+    }
+delete ringBoxes;
+ringBoxes = [];
+}
+
+function animateTurret(index){
+    var shootX=player.position.x
+    var shootY=player.position.y
+    var shootZ=player.position.z+100
+
+    var shootXYZ=new THREE.Vector3(shootX,shootY,shootZ)
+
+    if(turretModel.scene.position.distanceTo(player.position) < 500){
+        // let noisyPos = new THREE.Vector3().random().multiplyScalar(2,2,2).add(player.position)
+ 
+        turretModel.scene.lookAt(shootXYZ)
+        if(clock.getElapsedTime() - timeTillShot > 0.5 ){
+            timeTillShot = clock.getElapsedTime()
+            fireBulletsTurret(index)
+        }
+    }
+    else{
+        
+        // console.log(playerPos.sub(turretPos))
+        // turretModel.postion
+        turretModel.scene.position.x+=0.01*(player.position.x-turretModel.scene.position.x)
+        // turretModel.scene.position.y+=0.01*(player.position.y-turretModel.scene.position.y)
+        turretModel.scene.position.z+=0.01*(player.position.z-turretModel.scene.position.z)
+
+        turretBox.setFromObject(turretModel.scene)
+    }
+
+    if(turretModel1.scene.position.distanceTo(player.position) < 500){
+        turretModel1.scene.lookAt(shootXYZ)
+        if(clock.getElapsedTime() - timeTillShot > 0.5 ){
+            timeTillShot = clock.getElapsedTime()
+            fireBulletsTurret(index)
+        }
+        
+        turretModel1.scene.position.x+=0.005*(player.position.x-turretModel1.scene.position.x)
+        // turretModel1.scene.position.y+=0.01*(player.position.y-turretModel1.scene.position.y)
+        turretModel1.scene.position.z-=0.005*(player.position.z-turretModel1.scene.position.z)
+
+        turretBox1.setFromObject(turretModel1.scene)
+    }
+
+}
+
+function animateFlag(){
+    flag.rotation.set(0, 2*clock.getElapsedTime()  , 0.2 *Math.sin(clock.getElapsedTime() * 0.1))
+}
+
+function animateRings() {
+    for (var i = 0; i < ringNumber; i++) {
+        let object = scene.getObjectByName("ring"+String(i))
+        if(object===undefined){
+            continue
+        }
+        object.rotation.set(2*clock.getElapsedTime()+i , 2*clock.getElapsedTime()+i  , 0)
+    }
+    
+}
+
+//handles input for level related function
+function levelInput(e){
+    var node = document.getElementById("tutorial-info1")
+    
+    if(e.key==="r"){
+        showGameOver()
+        setTimeout(  restartLevel,2000)
+    }
+    else if(e.key===" "){
+        gamePaused=false;
+
+        let t2 = document.getElementById("tutorial-info2")
+        t2.innerHTML = ""
+    }
+
+}
+//resets entire level
+function restartLevel(){
+    turretModel.scene.position.set(-200,150,1500)
+    turretModel1.scene.position.set(200,200,1000)
+    player.position.set(0,0,0)
+    player.rotation.set(0,0,0)
+    timeLeft = 10;
+    hp = 50;
+    gamePaused = true;
+    destroyRings()
+    createRings()
+    sound.stop()
+    sound.play()
+
+}
+
+//html message showing game failure
+function showGameOver(){
+    let go =document.getElementById("game-over");
+    go.innerHTML= "Restarting level"
+    setTimeout(function(){//delay makes it dissappear after 1s
+        go.innerHTML=""
+    },1000)
+}
+//html message that shows when you finish the level
+function showGameWon(){
+    let go =document.getElementById("game-over");
+    go.innerHTML= "You beat level 3! achieved " +String(ringsRemoved)+'/' +String(ringNumber) +" boxes" 
+    setTimeout(function(){
+        go.innerHTML=""
+        window.location.href='../MainMenu'// routes back to menu after 5 seconds
+    },5000)
+    player.position.set(0,0,0)
+}
+
+function loadSpaceShip(callback){
+    loader.load('../assets/x-wing/modified-x-wing.glb',function ( gltf ) {
+        xWing= gltf;
+        
+
+        xWing.scene.traverse((o) => {
+            
+            if (o.isMesh){
+                let newMaterial = new THREE.MeshPhysicalMaterial({color: 0xffffff,envMap:stellarBackground,roughness:0.1,metalness:0.7,vertexColors: true})
+                o.castShadow = true;
+                o.receiveShadow = true;
+                o.material = newMaterial;
+            } 
+            
+          });
+	//use callback for correct initialisation of player
+    callback()
+	})
+ 
+}
+function createAtmosphericBoulders(){
+    loader.load('../assets/Boulder/PUSHILIN_boulder.gltf',function ( gltf ) {
+        gltf.scene.traverse((o) => {
+            if (o.isMesh){//box size, location
+                makeInstancedWithCollision(o.geometry,500,new THREE.Vector3(500,600,5000),new THREE.Vector3(300,0,0),50,-5)
+                makeInstancedWithCollision(o.geometry,500,new THREE.Vector3(500,600,5000),new THREE.Vector3(-300,0,0),50,-5)
+            } 
+          });
+    })
+}
+function updateUI(){
+    let timer = document.getElementById("timer")
+    timer.innerHTML = Math.round(timeLeft)
+    let hElement = document.getElementById("hp")
+    hElement.innerHTML = hp;
+    
+}
+
+
+
+function loadTextures(){
+    textureLoader.load('../assets/snow3/snow_03_rough_1k.png',function(texture){
+        snowRoughness = texture;
+        console.log('snow roughness loaded')
+    })
+    textureLoader.load('../assets/snow3/snow_03_nor_1k.png',function(texture){
+        snowNormal= texture;
+        console.log('snow normal loaded')
+    })
+    textureLoader.load('../assets/checkeredTexture.png',function(texture){
+        checkeredTexture= texture;
+        console.log('check  loaded')
+    })
+    textureLoader.load('../assets/brick7/castle_brick_07_diff_1k.png',function(texture){
+        console.log('check  loaded')
+        brickTexture= texture;
+        brickTexture.repeat.set(0.1,0.1)
+    })
+    textureLoader.load('../assets/brick7/castle_brick_07_nor_1k.png',function(texture){
+        console.log('check  loaded')
+        brickNormal= texture;
+        brickNormal.repeat.set(0.1,0.1)
+    })
+    textureLoader.load('../assets/brick7/castle_brick_07_rough_1k.png',function(texture){
+        console.log('check  loaded')
+        brickRoughness = texture;
+        brickRoughness.repeat.set(0.1,0.1)
+    })
+    // textureLoader.load('../assets/Asteroid/Asteroids_BaseColor.png',function(texture){
+    //     asteroidAlbedo= texture;
+    //     console.log('asteroid albedo loaded')
+    // })
+    // textureLoader.load('../assets/floor6/floor_tiles_06_spec_1k.png',function(texture){
+    //     texture.repeat.set(0.1, 0.1);
+    //     floorSpec= texture;
+    //     console.log('floor spec loaded')
+    // })
+}
+
+function loadModels(){
+     loader.load('../assets/turret/BlueSphereTurret.glb',function ( gltf ) {
+        console.log('turret loaded',gltf)
+        gltf.scene.name= "Turret"
+        turretModel = gltf;
+     })
+
+     loader.load('../assets/turret/BlueSphereTurret.glb',function ( gltf ) {
+        console.log('turret loaded',gltf)
+        gltf.scene.name= "Turret0"
+        turretModel1 = gltf;
+     })
+}
+
+//takes in geom, number of geom we want, the center of the placement area, the offset to place from center
+// s for scale, scalar is for reducing the size of the hitbox
+function makeInstancedWithCollision( geometry,count,center,offset,s,scalar ) {
+
+    const matrix = new THREE.Matrix4();
+    const material = new THREE.MeshPhysicalMaterial({color:0x8c7012})
+    boulderBoxes = []
+    // the mesh for instancing
+    mesh = new THREE.InstancedMesh( geometry, material, count,s );
+    mesh.name="instancedCollisionBoulder"
+        mesh.castShadow = true;
+        mesh.receiveShadow = true;
+    for ( let i = 0; i < count; i ++ ) {
+
+        randomizeMatrix( matrix,center,offset,s );
+        //sets the mode-view matrix in the instanced buffer for performant rendering
+        mesh.setMatrixAt( i, matrix );
+        let box = new THREE.Box3()
+        //sets the box for each rock
+        box.copy( mesh.geometry.boundingBox).applyMatrix4( matrix );
+        box.expandByScalar(scalar)
+        boulderBoxes.push(box)
+        // helper = new THREE.Box3Helper( box, 0xffff00 );
+        // helper.name = "bhelper" +String(i)
+        // scene.add(helper)
+    }
+    //adds to scene
+    scene.add( mesh );
+}
+//for atmospheric sound
+function setupAudio(){
+    listener = new THREE.AudioListener();
+    camera.add( listener );
+
+// create a global audio source
+    sound = new THREE.Audio( listener );
+
+// load a sound and set it as the Audio object's buffer
+    audioLoader = new THREE.AudioLoader();
+    audioLoader.load( '../assets/sound/SpaceAmbience.mp3', function( buffer ) {
+        sound.setBuffer( buffer );
+        sound.setLoop( true );
+        sound.setVolume( 0.1 );
+        sound.play();
+    });
+}

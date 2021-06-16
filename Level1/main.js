@@ -131,6 +131,7 @@ function animate() {
 	//gameplay loop update
 	firstcontrols.update(delta);
 	xWingBox.setFromObject(xWing.scene)
+	
 	if(flagBox.intersectsBox(xWingBox)){
 		showGameWon()
 	}
@@ -174,7 +175,7 @@ function animate() {
 	updateUI()
 
 	//if game over
-	if(hp<0 ||timeLeft <0){
+	if(hp<1 ||timeLeft <1){
 		console.warn("game over")
 		showGameOver()
 		restartLevel()

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>My first three.js app</title>
+		<link rel="stylesheet" type="text/css" href="../common/style.css" media="screen"/>
+	</head>
+	<body>
+		<script src ="../dependancies/three.js"></script>
+		<script src ="../common/FirstPersonControls.js"></script>
+		<script src="../dependancies/GLTFLoader.js"></script>
+		<script src="../dependancies/Pass.js"></script>
+		<script src="../dependancies/RenderPass.js"></script>
+		<script src="../dependancies/EffectComposer.js"></script>
+		<script src="../dependancies/BloomPass.js"></script>
+		<script src="player.js"></script>
+		<script src="../common/flag.js"></script>
+		<script src="../common/util.js"></script>
+		<script src = "../common/shooting.js"></script>
+		<script src ="variables.js"></script>
+		<script src ="scene3.js"> </script>
+		<!-- <script src ="../common/minimap.js"> </script> -->
+		<script src ="main.js"> </script>
+		    <div id="app"></div>
+    <div class="info">
+      <div class="info-item">
+        <h1 class="item-title">HP</h1>
+        <h2 id="hp" class="item-data" >50</h2>
+      </div>
+    </div>
+    <div id="tutorial-info1" class="info-text">Move your mouse to change direction</div>
+    <div class="info-right">
+      <div class="info-item-right">
+        <h1 class="item-title">Timer</h1>
+        <h2 id="timer" class="item-data" >0</h2>
+      </div>
+    </div>
+    <div id= "tutorial-info2" class= "message-large">
+    	
+        Collect the rings to increase the timer <br />
+        Reach the flag ahead <br />
+        Hit space to begin!
+    </div>
+    <div id="game-over" class="message-large">
+
+    </div>
+    
+	</body>
+
+</html>

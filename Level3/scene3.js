@@ -38,47 +38,44 @@ function fireBullets(){
 }
 
 function fireBulletsTurret(index){
-    // for(let i=0; i<bullets.length; i++) {
-    //     if(!bullets[i].update(turretModel.scene.position)) {
-    //         currentScene.remove(bullets[i].getMesh())//broken
-    //         bullets.splice(i, 1)
-    //     }
-    // }
-
-
-
-            
-    var turretPosition =turretModel.scene.position.clone()
-    // console.log(player)
-    var directionToPlayer = new THREE.Vector3()
-    turretModel.scene.getWorldDirection(directionToPlayer);
-    directionToPlayer = directionToPlayer.negate()
-    // console.log(direction)
-    // firstcontrols.getWorldDirection(direction)
-    // shipPosition.sub(new THREE.Vector3(0, 25, 100))
     
-    //  var matrix = new THREE.Matrix4();
-    // matrix.extractRotation( cube.matrix );
-
-    // console.log(matrix.extractRotation( cube.matrix ));
-    // var direction = new THREE.Vector3( 0, 0, 1 );
-    // matrix.multiplyVector3( direction );
-
+    var turretPosition =turretModel.scene.position.clone()
+    var turretPosition1=turretModel1.scene.position.clone()
+    var directionToPlayer = new THREE.Vector3()
+    var directionToPlayer1 = new THREE.Vector3()
+    turretModel.scene.getWorldDirection(directionToPlayer);
+    turretModel1.scene.getWorldDirection(directionToPlayer1);
+    directionToPlayer = directionToPlayer.negate()
+    directionToPlayer1 = directionToPlayer1.negate()
     var bullet = new laser(turretPosition,directionToPlayer)//cube.get
+    var bullet1 = new laser(turretPosition1,directionToPlayer1)
     turretBullets.push(bullet)
+    turretBullets.push(bullet1)
     scene.add(bullet.getMesh())
     scene.add(bullet.hitboxHelper)
+    scene.add(bullet1.getMesh())
+    scene.add(bullet1.hitboxHelper)
 
 }
 function createTurret(){
+
     turretModel.scene.scale.set(40,40,40);
-    turretModel.scene.position.set(0,100,1000)
+    turretModel.scene.position.set(-200,150,1000)
     turretModel.scene.name="turret"
     turretBox = new THREE.Box3()
     turretBox.setFromObject(turretModel.scene)
     let turretHelper = new THREE.Box3Helper(turretBox)
     scene.add(turretHelper)
     scene.add(turretModel.scene);
+
+    turretModel1.scene.scale.set(40,40,40);
+    turretModel1.scene.position.set(200,200,1000)
+    turretModel1.scene.name="turret"
+    turretBox1 = new THREE.Box3()
+    turretBox1.setFromObject(turretModel1.scene)
+    let turretHelper1 = new THREE.Box3Helper(turretBox1)
+    scene.add(turretHelper1)
+    scene.add(turretModel1.scene);
 }
 
 function createRings(){
@@ -123,10 +120,16 @@ ringBoxes = [];
 }
 
 function animateTurret(index){
-		
+    var shootX=player.position.x
+    var shootY=player.position.y
+    var shootZ=player.position.z+100
+
+    var shootXYZ=new THREE.Vector3(shootX,shootY,shootZ)
+
     if(turretModel.scene.position.distanceTo(player.position) < 500){
         // let noisyPos = new THREE.Vector3().random().multiplyScalar(2,2,2).add(player.position)
-        turretModel.scene.lookAt(player.position)
+ 
+        turretModel.scene.lookAt(shootXYZ)
         if(clock.getElapsedTime() - timeTillShot > 0.5 ){
             timeTillShot = clock.getElapsedTime()
             fireBulletsTurret(index)
@@ -137,13 +140,26 @@ function animateTurret(index){
         // console.log(playerPos.sub(turretPos))
         // turretModel.postion
         turretModel.scene.position.x+=0.01*(player.position.x-turretModel.scene.position.x)
-        turretModel.scene.position.y+=0.01*(player.position.y-turretModel.scene.position.y)
+        // turretModel.scene.position.y+=0.01*(player.position.y-turretModel.scene.position.y)
         turretModel.scene.position.z+=0.01*(player.position.z-turretModel.scene.position.z)
 
         turretBox.setFromObject(turretModel.scene)
-
-        // turretModel.scene.rotation.set(0, clock.getElapsedTime()*0.5,0)
     }
+
+    if(turretModel1.scene.position.distanceTo(player.position) < 500){
+        turretModel1.scene.lookAt(shootXYZ)
+        if(clock.getElapsedTime() - timeTillShot > 0.5 ){
+            timeTillShot = clock.getElapsedTime()
+            fireBulletsTurret(index)
+        }
+        
+        turretModel1.scene.position.x+=0.005*(player.position.x-turretModel1.scene.position.x)
+        // turretModel1.scene.position.y+=0.01*(player.position.y-turretModel1.scene.position.y)
+        turretModel1.scene.position.z-=0.005*(player.position.z-turretModel1.scene.position.z)
+
+        turretBox1.setFromObject(turretModel1.scene)
+    }
+
 }
 
 function animateFlag(){
@@ -179,7 +195,8 @@ function levelInput(e){
 }
 //resets entire level
 function restartLevel(){
-    turretModel.scene.position.set(0,100,1500)
+    turretModel.scene.position.set(-200,150,1500)
+    turretModel1.scene.position.set(200,200,1000)
     player.position.set(0,0,0)
     player.rotation.set(0,0,0)
     timeLeft = 10;
@@ -203,10 +220,10 @@ function showGameOver(){
 //html message that shows when you finish the level
 function showGameWon(){
     let go =document.getElementById("game-over");
-    go.innerHTML= "You beat level 2! achieved " +String(ringsRemoved)+'/' +String(ringNumber) +" boxes" 
+    go.innerHTML= "You beat level 3! achieved " +String(ringsRemoved)+'/' +String(ringNumber) +" boxes" 
     setTimeout(function(){
         go.innerHTML=""
-        window.location.href='../Level3'// routes back to menu after 5 seconds
+        window.location.href='../MainMenu'// routes back to menu after 5 seconds
     },5000)
     player.position.set(0,0,0)
 }
@@ -295,6 +312,12 @@ function loadModels(){
         console.log('turret loaded',gltf)
         gltf.scene.name= "Turret"
         turretModel = gltf;
+     })
+
+     loader.load('../assets/turret/BlueSphereTurret.glb',function ( gltf ) {
+        console.log('turret loaded',gltf)
+        gltf.scene.name= "Turret0"
+        turretModel1 = gltf;
      })
 }
 

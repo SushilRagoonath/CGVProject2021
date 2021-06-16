@@ -40,7 +40,7 @@ let scene, camera, renderer, starGeo, stars;
 
     setTimeout(() => {
       window.location.href="../MainMenu"
-    }, 25000);
+    }, 25250);
     
     animate();
   }

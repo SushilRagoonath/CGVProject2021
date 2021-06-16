@@ -1,50 +1,141 @@
 //spins our flag around the axis 
 function fireBullets(){
-    for(let i=0; i<bullets.length; i++) {
-        if(!bullets[i].update(player.position)) {
-            currentScene.remove(bullets[i].getMesh())
-            bullets.splice(i, 1)
+    // for(let i=0; i<bullets.length; i++) {
+    //     if(!bullets[i].update(player.position)) {
+    //         currentScene.remove(bullets[i].getMesh())//broken
+    //         bullets.splice(i, 1)
+    //     }
+    // }
+
+
+    window.addEventListener('mousedown', function(e) {
+        console.log(e)     
+        switch(e.button) {
+        case 0: // Left mouse click
+            
+            var shipPosition = player.position.clone()
+            // console.log(player)
+            var direction = new THREE.Vector3()
+            player.getWorldDirection(direction);
+            // console.log(direction)
+            // firstcontrols.getWorldDirection(direction)
+            // shipPosition.sub(new THREE.Vector3(0, 25, 100))
+            
+            //  var matrix = new THREE.Matrix4();
+            // matrix.extractRotation( cube.matrix );
+
+            // console.log(matrix.extractRotation( cube.matrix ));
+            // var direction = new THREE.Vector3( 0, 0, 1 );
+            // matrix.multiplyVector3( direction );
+
+            var bullet = new laser(shipPosition,direction)//cube.get
+            bullets.push(bullet)
+            scene.add(bullet.getMesh())
+            scene.add(bullet.hitboxHelper)
+        break
         }
-    }
+        })
+}
+
+function fireBulletsTurret(index){
+    // for(let i=0; i<bullets.length; i++) {
+    //     if(!bullets[i].update(turretModel.scene.position)) {
+    //         currentScene.remove(bullets[i].getMesh())//broken
+    //         bullets.splice(i, 1)
+    //     }
+    // }
 
 
-window.addEventListener('mousedown', function(e) {
-    console.log(e)     
-    switch(e.button) {
-       case 0: // Space
-         
-         var shipPosition = player.position.clone()
-         // console.log(player)
-         var direction = new THREE.Vector3()
-         player.getWorldDirection(direction);
-         console.log(direction)
-         // firstcontrols.getWorldDirection(direction)
-         // shipPosition.sub(new THREE.Vector3(0, 25, 100))
-        
-        //  var matrix = new THREE.Matrix4();
-        // matrix.extractRotation( cube.matrix );
 
-        // console.log(matrix.extractRotation( cube.matrix ));
-        // var direction = new THREE.Vector3( 0, 0, 1 );
-        // matrix.multiplyVector3( direction );
+            
+    var turretPosition =turretModel.scene.position.clone()
+    // console.log(player)
+    var directionToPlayer = new THREE.Vector3()
+    turretModel.scene.getWorldDirection(directionToPlayer);
+    directionToPlayer = directionToPlayer.negate()
+    // console.log(direction)
+    // firstcontrols.getWorldDirection(direction)
+    // shipPosition.sub(new THREE.Vector3(0, 25, 100))
+    
+    //  var matrix = new THREE.Matrix4();
+    // matrix.extractRotation( cube.matrix );
 
-         var bullet = new laser(shipPosition,direction)//cube.get
-         bullets.push(bullet)
-         scene.add(bullet.getMesh())
-         scene.add(bullet.hitboxHelper)
-       break
-    }
-    })
+    // console.log(matrix.extractRotation( cube.matrix ));
+    // var direction = new THREE.Vector3( 0, 0, 1 );
+    // matrix.multiplyVector3( direction );
+
+    var bullet = new laser(turretPosition,directionToPlayer)//cube.get
+    turretBullets.push(bullet)
+    scene.add(bullet.getMesh())
+    scene.add(bullet.hitboxHelper)
+
 }
 function createTurret(){
     turretModel.scene.scale.set(40,40,40);
-    turretModel.scene.name="turret0"
+    turretModel.scene.name="turret"
     turretBox = new THREE.Box3()
     turretBox.setFromObject(turretModel.scene)
     let turretHelper = new THREE.Box3Helper(turretBox)
     scene.add(turretHelper)
     scene.add(turretModel.scene);
 }
+
+function createRings(){
+    rings =[];
+    ringBoxes=[];
+    ringsRemoved =0;
+    const geometry = new THREE.TorusGeometry( 10, 3, 16, 100 );
+    console.log('before ring',snowRoughness)
+    const rock2 = new THREE.MeshPhysicalMaterial(
+     { color: 0x943e00,reflectivity:0.6,envMap:stellarBackground,roughness:0.7,metalness:0.2,roughnessMap:snowRoughness,normalMap:snowNormal,emissive:0x212121} 
+        );
+    for (let index = 0; index < ringNumber; index++) {
+        let x = 70 * Math.random() 
+        let z = 30* Math.random()  +85 *(index+1) 
+        let y = 5 * Math.random()
+        torus = new THREE.Mesh( geometry, rock2 );
+        torus.castShadow = true;
+        torus.receiveShadow = true;
+        //sets name so we can easilty delete later
+        torus.name="ring" +String(index) 
+        torus.position.z = z
+        torus.position.y = y
+        torus.position.x = x
+        rings.push(torus)
+        //creates hitbox for each ring
+        let box = new THREE.Box3().setFromObject(torus)
+        ringBoxes.push(box)
+
+        scene.add(torus)
+        // const helper = new THREE.Box3Helper( box, 0xffff00 );
+        // helper.name = "helper" +String(index)
+        // scene.add(helper)
+    }
+
+}
+
+function animateTurret(index){
+		
+    if(turretModel.scene.position.distanceTo(player.position) < 500){
+        // let noisyPos = new THREE.Vector3().random().multiplyScalar(2,2,2).add(player.position)
+        turretModel.scene.lookAt(player.position)
+        if(clock.getElapsedTime() - timeTillShot > 0.5 ){
+            timeTillShot = clock.getElapsedTime()
+            fireBulletsTurret(index)
+        }
+    }
+    else{
+        
+        // console.log(playerPos.sub(turretPos))
+        // turretModel.postion
+        turretModel.scene.position.x+=0.01*(player.position.x-turretModel.scene.position.x)
+        turretModel.scene.position.y+=0.01*(player.position.y-turretModel.scene.position.y)
+        turretModel.scene.position.z+=0.01*(player.position.z-turretModel.scene.position.z)
+
+        // turretModel.scene.rotation.set(0, clock.getElapsedTime()*0.5,0)
+    }
+}
+
 function animateFlag(){
     flag.rotation.set(0, 2*clock.getElapsedTime()  , 0.2 *Math.sin(clock.getElapsedTime() * 0.1))
 }

@@ -28,7 +28,7 @@ function showCredits(){
 }
 //loads in turret 
 function createTurret(){
-    loader.load('../assets/turret/SphereTurret.glb',function(glb){
+    loader.load('../assets/turret/BlueSphereTurret.glb',function(glb){
         console.log('turret loaded')
         turret = glb;
         turret.scene.scale.set(0.3,0.3,0.3)

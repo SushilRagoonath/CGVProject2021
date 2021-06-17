@@ -26,6 +26,10 @@ var turretBullets;
 var turretHp;
 //number of rings
 const ringNumber = 30; 
+//health boxes
+const healthNumber = 6; //amount of health packs 
+var health;
+var healthBoxes;
 //audio
 var listener; 
 var audioLoader;

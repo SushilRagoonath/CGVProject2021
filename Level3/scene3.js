@@ -1,40 +1,21 @@
 //spins our flag around the axis 
 function fireBullets(){
-    // for(let i=0; i<bullets.length; i++) {
-    //     if(!bullets[i].update(player.position)) {
-    //         currentScene.remove(bullets[i].getMesh())//broken
-    //         bullets.splice(i, 1)
+    // window.addEventListener('mousedown', function(e) {
+    //     console.log(e)     
+    //     switch(e.button) {
+    //     case 0: // Left mouse click
+            
+    //         var shipPosition = player.position.clone()
+    //         // console.log(player)
+    //         var direction = new THREE.Vector3()
+    //         player.getWorldDirection(direction);
+    //         var bullet = new laser(shipPosition,direction)//cube.get
+    //         bullets.push(bullet)
+    //         scene.add(bullet.getMesh())
+    //         scene.add(bullet.hitboxHelper)
+    //     break
     //     }
-    // }
-
-
-    window.addEventListener('mousedown', function(e) {
-        console.log(e)     
-        switch(e.button) {
-        case 0: // Left mouse click
-            
-            var shipPosition = player.position.clone()
-            // console.log(player)
-            var direction = new THREE.Vector3()
-            player.getWorldDirection(direction);
-            // console.log(direction)
-            // firstcontrols.getWorldDirection(direction)
-            // shipPosition.sub(new THREE.Vector3(0, 25, 100))
-            
-            //  var matrix = new THREE.Matrix4();
-            // matrix.extractRotation( cube.matrix );
-
-            // console.log(matrix.extractRotation( cube.matrix ));
-            // var direction = new THREE.Vector3( 0, 0, 1 );
-            // matrix.multiplyVector3( direction );
-
-            var bullet = new laser(shipPosition,direction)//cube.get
-            bullets.push(bullet)
-            scene.add(bullet.getMesh())
-            scene.add(bullet.hitboxHelper)
-        break
-        }
-        })
+    //     })
 }
 
 function fireBulletsTurret(index){
@@ -52,9 +33,9 @@ function fireBulletsTurret(index){
     turretBullets.push(bullet)
     turretBullets.push(bullet1)
     scene.add(bullet.getMesh())
-    scene.add(bullet.hitboxHelper)
+    // scene.add(bullet.hitboxHelper)
     scene.add(bullet1.getMesh())
-    scene.add(bullet1.hitboxHelper)
+    // scene.add(bullet1.hitboxHelper)
 
 }
 function createTurret(){
@@ -65,7 +46,7 @@ function createTurret(){
     turretBox = new THREE.Box3()
     turretBox.setFromObject(turretModel.scene)
     let turretHelper = new THREE.Box3Helper(turretBox)
-    scene.add(turretHelper)
+    // scene.add(turretHelper)
     scene.add(turretModel.scene);
 
     mixer = new THREE.AnimationMixer( turretModel.scene );
@@ -82,7 +63,7 @@ function createTurret(){
     turretBox1 = new THREE.Box3()
     turretBox1.setFromObject(turretModel1.scene)
     let turretHelper1 = new THREE.Box3Helper(turretBox1)
-    scene.add(turretHelper1)
+    // scene.add(turretHelper1)
     scene.add(turretModel1.scene);
 
     mixer1 = new THREE.AnimationMixer( turretModel1.scene );
@@ -182,6 +163,23 @@ function animateHealth() {
     
 }
 
+function turretshoot(){
+    listener1 = new THREE.AudioListener();
+    camera.add( listener1 );
+
+// create a global audio source
+    sound1 = new THREE.Audio( listener );
+
+// load a sound and set it as the Audio object's buffer
+    audioLoader1 = new THREE.AudioLoader();
+    audioLoader1.load( '../assets/sound/heat-vision.mp3', function( buffer ) {
+        sound1.setBuffer( buffer );
+        sound1.setLoop( false );
+        sound1.setVolume( 0.05 );
+        sound1.play();
+    });
+}
+
 function animateTurret(index){
     var shootX=player.position.x
     var shootY=player.position.y
@@ -193,9 +191,10 @@ function animateTurret(index){
         // let noisyPos = new THREE.Vector3().random().multiplyScalar(2,2,2).add(player.position)
  
         turretModel.scene.lookAt(shootXYZ)
-        if(clock.getElapsedTime() - timeTillShot > 0.5 ){
+        if(clock.getElapsedTime() - timeTillShot > 0.4 ){
             timeTillShot = clock.getElapsedTime()
             fireBulletsTurret(index)
+            turretshoot()
         }
     }
     else{
@@ -211,13 +210,13 @@ function animateTurret(index){
 
     if(turretModel1.scene.position.distanceTo(player.position) < 500){
         turretModel1.scene.lookAt(shootXYZ)
-        if(clock.getElapsedTime() - timeTillShot > 0.5 ){
+        if(clock.getElapsedTime() - timeTillShot > 0.4 ){
             timeTillShot = clock.getElapsedTime()
             fireBulletsTurret(index)
+            turretshoot()
         }
         
         turretModel1.scene.position.x+=0.005*(player.position.x-turretModel1.scene.position.x)
-        // turretModel1.scene.position.y+=0.01*(player.position.y-turretModel1.scene.position.y)
         turretModel1.scene.position.z-=0.005*(player.position.z-turretModel1.scene.position.z)
 
         turretBox1.setFromObject(turretModel1.scene)
@@ -319,6 +318,7 @@ function createAtmosphericBoulders(){
             if (o.isMesh){//box size, location
                 makeInstancedWithCollision(o.geometry,500,new THREE.Vector3(500,600,5000),new THREE.Vector3(300,0,0),50,-5)
                 makeInstancedWithCollision(o.geometry,500,new THREE.Vector3(500,600,5000),new THREE.Vector3(-300,0,0),50,-5)
+                
             } 
           });
     })
@@ -392,7 +392,7 @@ function makeInstancedWithCollision( geometry,count,center,offset,s,scalar ) {
 
     const matrix = new THREE.Matrix4();
     const material = new THREE.MeshPhysicalMaterial({color:0x8c7012})
-    boulderBoxes = []
+    // boulderBoxes = []
     // the mesh for instancing
     mesh = new THREE.InstancedMesh( geometry, material, count,s );
     mesh.name="instancedCollisionBoulder"

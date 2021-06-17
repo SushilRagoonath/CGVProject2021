@@ -146,7 +146,7 @@
 
 					case 'ArrowLeft':
 					case 'KeyA':
-						this.moveLeft = true;
+						// this.moveLeft = true;
 						break;
 
 					case 'ArrowDown':
@@ -156,7 +156,7 @@
 
 					case 'ArrowRight':
 					case 'KeyD':
-						this.moveRight = true;
+						// this.moveRight = true;
 						break;
 
 					case 'KeyR':

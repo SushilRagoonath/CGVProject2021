@@ -82,6 +82,7 @@ gamePaused=true;
 timeTillShot = 0.0
 bullets = [];
 turretBullets=[];
+boulderBoxes = []
 //creates all boulders in the scene
 createAtmosphericBoulders()
 fireBullets()
@@ -122,7 +123,7 @@ function animate() {
 	if ( mixer ) mixer.update( delta );
 	//checks if game is in running state
 	if(!gamePaused){
-		// firstcontrols.moveForward = true;
+		firstcontrols.moveForward = true;
 		timeLeft -= delta;
 	}else{
 		firstcontrols.moveForward = false;
@@ -154,6 +155,18 @@ function animate() {
 		}
 	}
 
+	//checks for rock collision
+	for (var i = 0; i < boulderBoxes.length; i++) {
+		if(boulderBoxes[i].intersectsBox(xWingBox)){
+			hp-=20;
+			console.log('collision with rock',hp)
+			scene.remove(boulderBoxes[i])
+			// console.log(boulders)
+			boulderBoxes.splice(i, 1)
+			// console.log(boulderBoxes.length)
+		}
+	}
+
 	let healthToDelete=[]; //keeps track of collided health
 	let healthBoxToDelete =-1;
 	//checks which health collided so we can flag them for deletion
@@ -173,7 +186,7 @@ function animate() {
 				if(scene.getObjectByName(ringsToDelete[index])!==undefined){
 					// updates player stats if ring hit
 					ringsRemoved +=1;
-					timeLeft +=2.2
+					timeLeft +=1.75
 					console.log(ringsRemoved)
 				}
 				//actually removing a ring from the scene
@@ -188,7 +201,7 @@ function animate() {
 				for (let index = 0; index < healthToDelete.length; index++) {
 					if(scene.getObjectByName(healthToDelete[index])!==undefined){
 						// updates player stats if health hit
-						hp +=10;
+						hp +=5;
 						console.log('picked up health',hp)
 					}
 					//actually removing a health box from the scene
@@ -212,7 +225,9 @@ function animate() {
 	}
 	
 	animateFlag()
-	animateTurret()
+	if (!gamePaused){
+		animateTurret()
+	}
 	animateRings()
 	animateHealth()
 

@@ -163,6 +163,23 @@ function animateHealth() {
     
 }
 
+function turretshoot(){
+    listener1 = new THREE.AudioListener();
+    camera.add( listener1 );
+
+// create a global audio source
+    sound1 = new THREE.Audio( listener );
+
+// load a sound and set it as the Audio object's buffer
+    audioLoader1 = new THREE.AudioLoader();
+    audioLoader1.load( '../assets/sound/heat-vision.mp3', function( buffer ) {
+        sound1.setBuffer( buffer );
+        sound1.setLoop( false );
+        sound1.setVolume( 0.05 );
+        sound1.play();
+    });
+}
+
 function animateTurret(index){
     var shootX=player.position.x
     var shootY=player.position.y
@@ -174,9 +191,10 @@ function animateTurret(index){
         // let noisyPos = new THREE.Vector3().random().multiplyScalar(2,2,2).add(player.position)
  
         turretModel.scene.lookAt(shootXYZ)
-        if(clock.getElapsedTime() - timeTillShot > 0.5 ){
+        if(clock.getElapsedTime() - timeTillShot > 0.4 ){
             timeTillShot = clock.getElapsedTime()
             fireBulletsTurret(index)
+            turretshoot()
         }
     }
     else{
@@ -195,6 +213,7 @@ function animateTurret(index){
         if(clock.getElapsedTime() - timeTillShot > 0.4 ){
             timeTillShot = clock.getElapsedTime()
             fireBulletsTurret(index)
+            turretshoot()
         }
         
         turretModel1.scene.position.x+=0.005*(player.position.x-turretModel1.scene.position.x)

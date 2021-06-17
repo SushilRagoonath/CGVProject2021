@@ -44,7 +44,6 @@ function levelInput(e){
 //resets entire level
 function restartLevel(){
     player.position.set(0,0,0)
-    player.rotation.set(0,0,0)
     timeLeft = 10;
     hp = 50;
     gamePaused = true;

@@ -85,6 +85,7 @@ setupAudio()
 
 function animate() {
 	var delta = clock.getDelta();
+	if ( mixer ) mixer.update( delta );
 	turret.scene.position.set(3* Math.cos( 0.5 * clock.getElapsedTime()) , 2,3* Math.sin( 0.5*clock.getElapsedTime()))
 	turret.scene.lookAt(0,0,0)
 	xWing.scene.rotation.set(0, clock.getElapsedTime()*0.5,0)

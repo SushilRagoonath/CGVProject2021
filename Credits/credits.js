@@ -38,7 +38,11 @@ let scene, camera, renderer, starGeo, stars;
     stars = new THREE.Points(starGeo,starMaterial);
     scene.add(stars);
 
-    animate(); 
+    setTimeout(() => {
+      window.location.href="../MainMenu"
+    }, 25250);
+    
+    animate();
   }
     //rendering loop
   function animate() {

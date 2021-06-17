@@ -17,14 +17,15 @@ return newObj;
 }
 
 function showCredits(){
-    let container = document.getElementById("body")
-    let text = document.createElement("OBJECT")
-    text.data = "../assets/AssetAttributions.txt"
-    text.className = "scroll-text"
-    container.appendChild(text)
-    setTimeout(function(){
-        text.remove()
-    },4000)
+    // let container = document.getElementById("body")
+    // let text = document.createElement("OBJECT")
+    // text.data = "../assets/AssetAttributions.txt"
+    // text.className = "scroll-text"
+    // container.appendChild(text)
+    // setTimeout(function(){
+    //     text.remove()
+    // },4000)
+    window.location.href='../Credits/credits.html'
 }
 //loads in turret 
 function createTurret(){

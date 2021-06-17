@@ -198,7 +198,7 @@ function animate() {
 		
 		if(bullets[i].hitbox.intersectsBox(turretBox)){
 			scene.remove(turretModel)
-			scene.remove(turretBox)
+			scene.remove(turretBox)//fix later
 			scene.remove(bullets[i].getMesh())
 
 			bullets.splice(i, 1)

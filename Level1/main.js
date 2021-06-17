@@ -72,6 +72,8 @@ camera.position.set( 0, 1,-0.5);
 hp = 50;
 timeLeft = 10;
 gamePaused=true;
+boulderBoxes = []
+
 
 //creates all boulders in the scene
 createAtmosphericBoulders()
@@ -165,8 +167,12 @@ function animate() {
 	//checks for rock collision
 	for (var i = 0; i < boulderBoxes.length; i++) {
 		if(boulderBoxes[i].intersectsBox(xWingBox)){
-			hp-=1;
+			hp-=20;
 			console.log('collision with rock',hp)
+			scene.remove(boulderBoxes[i])
+			// console.log(boulders)
+			boulderBoxes.splice(i, 1)
+			// console.log(boulderBoxes.length)
 		}
 	}
 	setTimeout(function(){

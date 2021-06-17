@@ -240,17 +240,14 @@ function loadTextures(){
 //takes in geom, number of geom we want, the center of the placement area, the offset to place from center
 // s for scale, scalar is for reducing the size of the hitbox
 function makeInstancedWithCollision( geometry,count,center,offset,s,scalar ) {
-
     const matrix = new THREE.Matrix4();
     const material = new THREE.MeshPhysicalMaterial({color:0x8c7012})
-    boulderBoxes = []
     // the mesh for instancing
     mesh = new THREE.InstancedMesh( geometry, material, count,s );
-    mesh.name="instancedCollisionBoulder"
         mesh.castShadow = true;
         mesh.receiveShadow = true;
     for ( let i = 0; i < count; i ++ ) {
-
+        // mesh.name="boulder"+String(i)
         randomizeMatrix( matrix,center,offset,s );
         //sets the mode-view matrix in the instanced buffer for performant rendering
         mesh.setMatrixAt( i, matrix );
@@ -259,10 +256,14 @@ function makeInstancedWithCollision( geometry,count,center,offset,s,scalar ) {
         box.copy( mesh.geometry.boundingBox).applyMatrix4( matrix );
         box.expandByScalar(scalar)
         boulderBoxes.push(box)
+        // console.log(mesh)
+        // boulders.push(mesh)
         // helper = new THREE.Box3Helper( box, 0xffff00 );
         // helper.name = "bhelper" +String(i)
         // scene.add(helper)
+        
     }
+    // console.log(boulders)
     //adds to scene
     scene.add( mesh );
 }

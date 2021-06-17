@@ -20,7 +20,7 @@ const ringNumber = 30; //amount of rings
 var rings;
 var ringBoxes;
 var ringsRemoved;
-const healthNumber = 6; //amount of health  
+const healthNumber = 6; //amount of health packs 
 var health;
 var healthBoxes;
 var instancedCollisionBoulder;

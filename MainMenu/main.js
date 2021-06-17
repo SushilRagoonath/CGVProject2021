@@ -84,6 +84,7 @@ scene.environment = stellarBackground;
 setupAudio()
 
 function animate() {
+	document.getElementsByClassName("info")[0].style.display= 'initial'
 	var delta = clock.getDelta();
 	if ( mixer ) mixer.update( delta );
 	turret.scene.position.set(3* Math.cos( 0.5 * clock.getElapsedTime()) , 2,3* Math.sin( 0.5*clock.getElapsedTime()))

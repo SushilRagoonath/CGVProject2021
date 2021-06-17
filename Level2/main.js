@@ -45,7 +45,9 @@ stellarBackground = new THREE.CubeTextureLoader()
 	'posz.png',
 	'negz.png'
 ] );
-
+setTimeout(function(){
+	document.getElementById('loadingScreen').style.display= 'none'
+},3000)
 //creates rings for scene and collision after delay so we have textures
 setTimeout(function(){ createRings() },200)
 setTimeout(function(){ createHealthBoxes() },400)

@@ -115,6 +115,8 @@ setupAudio()
 
 function animate() {
 	var delta = clock.getDelta();
+	if ( mixer1 ) mixer1.update( delta );
+	if ( mixer ) mixer.update( delta );
 	//checks if game is in running state
 	if(!gamePaused){
 		// firstcontrols.moveForward = true;

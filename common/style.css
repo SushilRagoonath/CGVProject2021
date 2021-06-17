@@ -51,12 +51,14 @@ canvas {
   bottom: 1rem;
   left: 1rem;
   color: white;
+  display: none;
 }
 .info-right {
   position: absolute;
   bottom: 1rem;
   right: 1rem;
   color: white;
+  display: none;
 }
 .info-text {
   position: fixed;
@@ -129,4 +131,16 @@ canvas {
   100% {
     font-weight: bold;
   }
+}
+#loadingScreen {
+  width:100%;
+  height:100%;
+}
+
+#tutorial-info1{
+  display:none;
+}
+
+#tutorial-info2{
+  display:none;
 }

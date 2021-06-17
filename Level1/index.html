@@ -4,8 +4,10 @@
 		<meta charset="utf-8">
 		<title>My first three.js app</title>
 		<link rel="stylesheet" type="text/css" href="../common/style.css" media="screen"/>
+
 	</head>
 	<body>
+		<img src='../common/loading.gif' id='loadingScreen'/>
 		<script src ="../dependancies/three.js"></script>
 		<script src ="../common/FirstPersonControls.js"></script>
 		<script src="../dependancies/GLTFLoader.js"></script>
@@ -28,13 +30,14 @@
         <h2 id="hp" class="item-data" >50</h2>
       </div>
     </div>
-    <div id="tutorial-info1" class="info-text">Move your mouse to change direction</div>
+    
     <div class="info-right">
       <div class="info-item-right">
         <h1 class="item-title">Timer</h1>
         <h2 id="timer" class="item-data" >0</h2>
       </div>
     </div>
+	<div id="tutorial-info1" class="info-text">Move your mouse to change direction</div>
     <div id= "tutorial-info2" class= "message-large">
     	
         Collect the rings to increase the timer <br />

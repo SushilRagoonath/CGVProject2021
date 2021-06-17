@@ -189,6 +189,7 @@ function animate() {
 				// updates player stats if ring hit
 				ringsRemoved +=1;
 				timeLeft +=2.2
+				pickUpSound.play()
 				console.log(ringsRemoved)
 			}
 			//actually removing a ring from the scene

@@ -32,6 +32,7 @@ var flagBox;
 var listener; 
 var audioLoader;
 var sound;
+var pickUpSound;
 //textures
 var textureLoader;
 var snowRoughness;

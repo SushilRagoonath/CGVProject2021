@@ -282,4 +282,10 @@ function setupAudio(){
         sound.setVolume( 0.1 );
         sound.play();
     });
+    pickUpSound = new THREE.Audio(listener);
+    audioLoader.load('../assets/sound/pickup.wav',function(buffer){
+        pickUpSound.setBuffer(buffer);
+        pickUpSound.setLoop(false);
+        pickUpSound.setVolume(0.2)
+    })
 }

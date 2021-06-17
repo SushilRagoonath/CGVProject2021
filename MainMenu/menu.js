@@ -43,10 +43,19 @@ function createTurret(){
             } 
             
           });
-
+        
         turret.scene.position.x = 1
         turret.scene.position.y = 1
         scene.add(turret.scene)
+
+      
+        mixer = new THREE.AnimationMixer( turret.scene );
+        
+        turret.animations.forEach( ( clip ) => {
+          
+            mixer.clipAction( clip ).play();
+          
+        } );
     })
 }
 

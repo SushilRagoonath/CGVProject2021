@@ -68,6 +68,14 @@ function createTurret(){
     scene.add(turretHelper)
     scene.add(turretModel.scene);
 
+    mixer = new THREE.AnimationMixer( turretModel.scene );
+        
+        turretModel.animations.forEach( ( clip ) => {
+          
+            mixer.clipAction( clip ).play();
+          
+        } );
+
     turretModel1.scene.scale.set(40,40,40);
     turretModel1.scene.position.set(200,200,1000)
     turretModel1.scene.name="turret"
@@ -76,6 +84,14 @@ function createTurret(){
     let turretHelper1 = new THREE.Box3Helper(turretBox1)
     scene.add(turretHelper1)
     scene.add(turretModel1.scene);
+
+    mixer1 = new THREE.AnimationMixer( turretModel1.scene );
+        
+        turretModel1.animations.forEach( ( clip ) => {
+          
+            mixer1.clipAction( clip ).play();
+          
+        } );
 }
 
 function createRings(){

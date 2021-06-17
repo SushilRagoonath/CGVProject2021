@@ -79,6 +79,13 @@ function createTurret(){
     let turretHelper = new THREE.Box3Helper(turretBox)
     scene.add(turretHelper)
     scene.add(turretModel.scene);
+    mixer = new THREE.AnimationMixer( turretModel.scene );
+        
+        turretModel.animations.forEach( ( clip ) => {
+          
+            mixer.clipAction( clip ).play();
+          
+        } );
 }
 
 function createRings(){

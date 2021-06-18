@@ -247,12 +247,14 @@ function showGameOver(){
 //html message that shows when you finish the level
 function showGameWon(){
     let go =document.getElementById("game-over");
-    go.innerHTML= "You beat level 2! achieved " +String(ringsRemoved)+'/' +String(ringNumber) +" boxes" 
+    go.innerHTML= "You beat level 2! achieved " +String(ringsRemoved)+'/' +String(ringNumber) +" rings" 
     setTimeout(function(){
         go.innerHTML=""
         window.location.href='../Level3'// routes back to menu after 5 seconds
-    },5000)
+    },3000)
     player.position.set(0,0,0)
+    gamePaused = true
+    turretModel.scene.position.set(0,100,5500)
 }
 
 function loadSpaceShip(callback){

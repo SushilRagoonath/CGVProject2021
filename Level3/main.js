@@ -70,7 +70,7 @@ loadSpaceShip(function(){ //callback after loaded
 
 	//sets up the controller for the player 
 	firstcontrols= new THREE.FirstPersonControls(player);
-	firstcontrols.lookSpeed = 0.05;
+	firstcontrols.lookSpeed = 0.10;
 	firstcontrols.movementSpeed = 10;
 
 })
@@ -188,6 +188,7 @@ function animate() {
 					// updates player stats if ring hit
 					ringsRemoved +=1;
 					timeLeft +=1.5
+					pickUpSound.play()
 					console.log(ringsRemoved)
 				}
 				//actually removing a ring from the scene

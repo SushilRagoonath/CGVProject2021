@@ -34,6 +34,7 @@ var healthBoxes;
 var listener; 
 var audioLoader;
 var sound;
+var pickUpSound;
 //textures
 var textureLoader;
 var snowRoughness;
